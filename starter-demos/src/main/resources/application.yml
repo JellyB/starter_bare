@@ -1,4 +1,6 @@
+server:
+  port: 9999
 spring:
-  redis:
-    sentinel:
-      master:
+  http:
+    encoding:
+      charset: utf-8

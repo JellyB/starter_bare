@@ -1,14 +1,19 @@
 package com.huatu.tiku.springboot.users.core;
 
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
+import com.huatu.tiku.springboot.users.service.UserSessionService;
 import com.huatu.tiku.springboot.users.support.EnableUserSessions;
 import com.huatu.tiku.springboot.users.support.SessionRedisTemplate;
+import com.huatu.tiku.springboot.users.support.TokenMethodArgumentResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.web.method.annotation.RequestHeaderMethodArgumentResolver;
 import redis.clients.jedis.JedisSentinelPool;
 
 /**
@@ -28,7 +33,19 @@ public class UsersAutoConfiguration {
      * @return
      */
     @Bean
-    public SessionRedisTemplate sessionRedisTemplate(@Autowired @Qualifier("sessionJediSentinelPool") JedisSentinelPool jediSentinelPool){
+    public SessionRedisTemplate sessionRedisTemplate(@Autowired @Qualifier("jediSentinelPool") JedisSentinelPool jediSentinelPool){
         return new SessionRedisTemplate(jediSentinelPool);
+    }
+
+
+    @Bean
+    public UserSessionService userSessionService(){
+        return new UserSessionService();
+    }
+
+    @Bean
+    @ConditionalOnClass(RequestHeaderMethodArgumentResolver.class)
+    public TokenMethodArgumentResolver tokenMethodArgumentResolver(ConfigurableBeanFactory beanFactory,UserSessionService userSessionService){
+        return new TokenMethodArgumentResolver(beanFactory,userSessionService);
     }
 }

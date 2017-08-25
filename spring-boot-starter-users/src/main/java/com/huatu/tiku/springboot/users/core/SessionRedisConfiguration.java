@@ -31,7 +31,7 @@ public class SessionRedisConfiguration {
      * @return
      */
     @Bean
-    public JedisSentinelPool sessionJediSentinelPool(){
+    public JedisSentinelPool jediSentinelPool(){
         JedisPoolConfig poolConfig = this.properties.getPool() != null ? jedisPoolConfig() : new JedisPoolConfig();
         UserSessionRedisProperties.Sentinel sentinelConfig = properties.getSentinel();
         Set<String> sentinelNodes = Sets.newHashSet(sentinelConfig.getNodes().split(","));

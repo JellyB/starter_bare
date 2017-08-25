@@ -5,6 +5,9 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
 import redis.clients.util.Pool;
 
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author hanchao
  * @date 2017/8/23 17:15
@@ -31,15 +34,60 @@ public class SessionRedisTemplate {
     }
 
 
+    /**
+     * redis get
+     * @param key
+     * @return
+     */
+    public String get(String key){
+        return execute(jedis -> jedis.get(key));
+    }
+    /**
+     * redis hget
+     * @param key
+     * @param field
+     * @return
+     */
     public String hget(String key,String field){
         return execute(jedis -> jedis.hget(key,field));
     }
 
-    public void hset(String key,String field,String value){
-        execute(jedis -> jedis.hset(key,field,value));
+    public Map<String,String> hgetAll(String key){
+        return execute(jedis -> jedis.hgetAll(key));
     }
 
-    public void set(String key,String value){
-        execute(jedis -> jedis.set(key,value));
+    /**
+     * redis hset
+     * @param key
+     * @param field
+     * @param value
+     * @return
+     */
+    public Long hset(String key,String field,String value){
+        return execute(jedis -> jedis.hset(key,field,value));
+    }
+
+    /**
+     * redis set
+     * @param key
+     * @param value
+     * @return
+     */
+    public String set(String key,String value){
+        return execute(jedis -> jedis.set(key,value));
+    }
+
+    /**
+     * 设置失效时间
+     * @param key
+     * @param expire
+     * @param unit
+     * @return
+     */
+    public Long expire(String key, int expire, TimeUnit unit){
+        if(unit != null) {
+            return execute(jedis -> jedis.expire(key,(int) TimeUnit.SECONDS.convert(expire, unit)));
+        }
+        return execute(jedis -> jedis.expire(key,expire));
     }
 }
