@@ -48,4 +48,5 @@ public class UsersAutoConfiguration {
     public TokenMethodArgumentResolver tokenMethodArgumentResolver(ConfigurableBeanFactory beanFactory,UserSessionService userSessionService){
         return new TokenMethodArgumentResolver(beanFactory,userSessionService);
     }
+
 }

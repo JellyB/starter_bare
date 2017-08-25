@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.huatu.tiku</groupId>
+    <groupId>com.huatu.tiku.springboot</groupId>
     <artifactId>spring-boot-starter-users</artifactId>
 
     <dependencies>
@@ -41,6 +41,11 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
             <optional>true</optional>
         </dependency>
     </dependencies>
