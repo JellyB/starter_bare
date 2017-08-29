@@ -19,6 +19,7 @@
         <module>spring-boot-starter-users</module>
         <module>starter-demos</module>
         <module>spring-boot-starter-dubbo</module>
+        <module>spring-boot-starter-restclient</module>
     </modules>
 
 </project>

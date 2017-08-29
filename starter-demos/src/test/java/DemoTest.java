@@ -3,6 +3,7 @@ import com.huatu.springboot.demo.App;
 import com.huatu.springboot.demo.TestBean;
 import com.huatu.springboot.demo.UserBean;
 import com.huatu.tiku.springboot.users.support.SessionRedisTemplate;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ public class DemoTest {
     private SessionRedisTemplate sessionRedisTemplate;
 
     @Test
+    @Ignore
     public void test(){
         System.out.println(name);
         System.out.println(userBean);
