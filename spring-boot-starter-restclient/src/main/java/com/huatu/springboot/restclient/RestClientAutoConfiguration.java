@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2017/8/29 11:45
  */
 @Configuration
-@EnableApolloConfig("ht.rest-clients")
+@EnableApolloConfig("htonline.rest-clients")
 @EnableConfigurationProperties(RestClientConfig.class)
 public class RestClientAutoConfiguration {
 

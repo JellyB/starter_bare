@@ -9,7 +9,7 @@ import java.beans.PropertyEditorSupport;
 import java.io.IOException;
 
 /**
- * 用到这个类基本是有问题，usersession不建议default
+ * usersession不建议default
  * @author hanchao
  * @date 2017/8/25 19:08
  */
