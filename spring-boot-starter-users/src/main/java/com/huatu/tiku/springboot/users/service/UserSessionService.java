@@ -273,7 +273,7 @@ public class UserSessionService {
                     .subject(StringUtils.isEmpty(subject) ? -1:Integer.valueOf(subject))
                     .area(StringUtils.isEmpty(area) ? -1:Integer.valueOf(area))
                     .expireTime(StringUtils.isEmpty(expireTime) ? -1:Long.valueOf(expireTime))
-                    .category(StringUtils.isEmpty(ssoId) ? -1:Integer.valueOf(category))
+                    .category(StringUtils.isEmpty(category) ? -1:Integer.valueOf(category))
                     .qcount(StringUtils.isEmpty(qcount) ? DEFAUL_QCOUNT:Integer.valueOf(qcount))
                     .mobile(serializeSession.get(UserRedisSessionKeys.mobile))
                     .email(serializeSession.get(UserRedisSessionKeys.email))

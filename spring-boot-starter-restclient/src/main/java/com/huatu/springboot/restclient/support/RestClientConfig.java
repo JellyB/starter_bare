@@ -25,6 +25,8 @@ public class RestClientConfig {
     private int maxPerRoute = 100;
 
 
+    private boolean redirectable = true;//是否需要重定向，默认为true
+
     public int getConnectTimeout() {
         return connectTimeout;
     }
@@ -87,5 +89,13 @@ public class RestClientConfig {
 
     public void setKeepAliveTime(int keepAliveTime) {
         this.keepAliveTime = keepAliveTime;
+    }
+
+    public boolean isRedirectable() {
+        return redirectable;
+    }
+
+    public void setRedirectable(boolean redirectable) {
+        this.redirectable = redirectable;
     }
 }

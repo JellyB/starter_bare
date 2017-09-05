@@ -66,7 +66,7 @@ public class RestClientAutoConfiguration {
                     .writeTimeout(config.getWriteTimeout(),TimeUnit.MILLISECONDS)
                     .readTimeout(config.getReadTimeout(),TimeUnit.MILLISECONDS)
                     .connectionPool(new ConnectionPool(config.getMaxTotal(),config.getKeepAliveTime(), TimeUnit.MILLISECONDS))
-                    .followRedirects(false)//不跟踪重定向
+                    .followRedirects(config.isRedirectable())//不跟踪重定向
                     .build();
         }
     }
@@ -102,8 +102,12 @@ public class RestClientAutoConfiguration {
             // 将每个路由基础的连接增加到20
             cm.setDefaultMaxPerRoute(config.getMaxPerRoute());
 
-            RequestConfig requestConfig = RequestConfig.custom().setConnectionRequestTimeout(config.getConnectRequestTimeout()).
-                    setConnectTimeout(config.getConnectTimeout()).setSocketTimeout(config.getSocketTimeout()).build();
+            RequestConfig requestConfig = RequestConfig.custom()
+                    .setConnectionRequestTimeout(config.getConnectRequestTimeout())
+                    .setConnectTimeout(config.getConnectTimeout())
+                    .setSocketTimeout(config.getSocketTimeout())
+                    .setRedirectsEnabled(config.isRedirectable())
+                    .build();
 
             //请求重试处理
             HttpRequestRetryHandler httpRequestRetryHandler = new HttpRequestRetryHandler() {
