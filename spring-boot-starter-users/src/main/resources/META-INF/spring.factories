@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.huatu.tiku.springboot.users.core.UsersAutoConfiguration
+com.huatu.tiku.springboot.users.support.EnableUserSessions=com.huatu.tiku.springboot.users.core.UsersAutoConfiguration
