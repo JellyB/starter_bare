@@ -20,6 +20,7 @@
         <module>starter-demos</module>
         <module>spring-boot-starter-dubbo</module>
         <module>spring-boot-starter-restclient</module>
+        <module>spring-boot-starter-executor</module>
     </modules>
 
 </project>

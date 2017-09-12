@@ -59,7 +59,7 @@ public class RestClientAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(OkHttpClient.class)
-        @ConditionalOnProperty(value = "restclient.okhttp.enabled",havingValue = "true",matchIfMissing = false)
+        @ConditionalOnProperty(value = "htonline.okhttp.enabled",havingValue = "true",matchIfMissing = false)
         public OkHttpClient okHttpClient(){
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
             return builder.connectTimeout(config.getConnectTimeout(), TimeUnit.MILLISECONDS)
@@ -84,7 +84,7 @@ public class RestClientAutoConfiguration {
          */
         @Bean
         @ConditionalOnMissingBean(HttpClient.class)
-        @ConditionalOnProperty(value = "restclient.httpclient.enabled",havingValue = "true",matchIfMissing = true)
+        @ConditionalOnProperty(value = "htonline.httpclient.enabled",havingValue = "true",matchIfMissing = true)
         public HttpClient httpClient()  throws Exception {
             ConnectionSocketFactory plainsf = PlainConnectionSocketFactory.getSocketFactory();
 
