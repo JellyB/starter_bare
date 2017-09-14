@@ -1,6 +1,9 @@
 package com.huatu.springboot.executor;
 
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
+import com.huatu.springboot.executor.support.DefaultAsyncUncaughtExceptionHandler;
+import com.huatu.springboot.executor.support.ExecutorProperties;
+import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -32,5 +35,12 @@ public class ExecutorAutoConfiguration {
         threadPoolTaskExecutor.setKeepAliveSeconds(executorProperties.getKeepAliveSeconds());
         threadPoolTaskExecutor.setQueueCapacity(executorProperties.getQueueCapacity());
         return threadPoolTaskExecutor;
+    }
+
+
+    @Bean
+    @ConditionalOnClass(SimpleAsyncUncaughtExceptionHandler.class)
+    public DefaultAsyncUncaughtExceptionHandler asyncUncaughtExceptionHandler(){
+        return new DefaultAsyncUncaughtExceptionHandler();
     }
 }

@@ -292,6 +292,9 @@ public class UserSessionService {
      * @throws BizException
      */
     public UserSession assertSession(UserSession userSession) throws BizException {
+        if(userSession == null){
+            throw new BizException(UserErrors.SESSION_EXPIRE);
+        }
         //有新设备登录，当前设备已经被踢掉
         if ("1".equals(userSession.getOldToken())) {
             //fastdateformat维护了自己的缓存，不会重复生成实例

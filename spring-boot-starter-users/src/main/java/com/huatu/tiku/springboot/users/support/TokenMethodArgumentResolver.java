@@ -59,11 +59,11 @@ public class TokenMethodArgumentResolver extends RequestHeaderMethodArgumentReso
         }
 
         UserSession userSession = userSessionService.getUserSession(token);
-        if(userSession == null){
-            return needSimple ? -1:null;
-        }
         if(config.check()){
             userSessionService.assertSession(userSession);
+        }
+        if(userSession == null){
+            return needSimple ? -1:null;
         }
         return needSimple ? userSession.getId():userSession;
     }
