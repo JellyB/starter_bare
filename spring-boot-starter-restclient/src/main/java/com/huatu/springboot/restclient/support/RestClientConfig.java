@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author hanchao
  * @date 2017/8/29 11:53
  */
-@ConfigurationProperties(prefix = "rest-clients.")
+@ConfigurationProperties(prefix = "rest-clients")
 public class RestClientConfig {
     private static int DEFAULT_CONNECT_TIMEOUT = 2000;
     private static int DEFAULT_CONNECT_REQUEST_TIMEOUT = 2000;

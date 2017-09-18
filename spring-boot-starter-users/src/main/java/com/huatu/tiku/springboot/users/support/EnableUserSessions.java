@@ -1,5 +1,8 @@
 package com.huatu.tiku.springboot.users.support;
 
+import com.huatu.tiku.springboot.users.core.UsersAutoConfiguration;
+import org.springframework.context.annotation.Import;
+
 import java.lang.annotation.*;
 
 /**
@@ -10,6 +13,9 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
+@Import(UsersAutoConfiguration.class)
+
+@Deprecated
 public @interface EnableUserSessions {
 
 }

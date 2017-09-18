@@ -4,3 +4,4 @@ spring:
   http:
     encoding:
       charset: utf-8
+
