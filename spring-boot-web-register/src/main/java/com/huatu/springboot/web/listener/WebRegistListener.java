@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextStoppedEvent;
+import org.springframework.context.event.ContextClosedEvent;
 
 /**
  * @author hanchao
@@ -30,7 +30,7 @@ public class WebRegistListener implements ApplicationListener {
         if(event instanceof ApplicationReadyEvent){
             log.info("app start,regist...");
             webRegister.regist();
-        }else if(event instanceof ContextStoppedEvent){
+        }else if(event instanceof ContextClosedEvent){
             log.info("app start,stop...");
             webRegister.unregister();
         }

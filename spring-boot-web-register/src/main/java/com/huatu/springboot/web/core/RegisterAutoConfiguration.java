@@ -41,8 +41,9 @@ public class RegisterAutoConfiguration {
     @ConditionalOnMissingBean(WebRegister.class)
     @Bean
     public EtcdWebRegister etcdWebRegister(){
+        log.info("begin build etcd register...");
         if(StringUtils.isBlank(registerConfig.getConnectString())){
-            log.error("unknow regist center,wont regist....");
+            log.error("unknown regist center,wont regist....");
             return null;
         }
 
@@ -54,7 +55,7 @@ public class RegisterAutoConfiguration {
         }
         String host = IpUtil.getLocalIP(registerConfig.getPreferedNetworks());
         if(StringUtils.isBlank(appName) || StringUtils.isBlank(host)){
-            log.error("unknow host or appName,wont regist....");
+            log.error("unknown host or appName,wont regist....");
             return null;
         }
         if(port < 0 || port > 65535){
