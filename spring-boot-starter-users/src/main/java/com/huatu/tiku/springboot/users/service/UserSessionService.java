@@ -1,6 +1,7 @@
 package com.huatu.tiku.springboot.users.service;
 
 import com.huatu.common.exception.BizException;
+import com.huatu.common.exception.UnauthorizedException;
 import com.huatu.tiku.springboot.users.bean.UserErrors;
 import com.huatu.tiku.springboot.users.bean.UserSession;
 import com.huatu.tiku.springboot.users.common.UserRedisSessionKeys;
@@ -307,12 +308,12 @@ public class UserSessionService {
             final String tipMessage = String.format(TIP_MESSAGE, time);
             //设置过期一个月,让自动过期
             sessionRedisTemplate.expire(userSession.getToken(),30, TimeUnit.DAYS);
-            throw new BizException(UserErrors.LOGIN_ON_OTHER_DEVICE,tipMessage);
+            throw new UnauthorizedException(UserErrors.LOGIN_ON_OTHER_DEVICE,tipMessage);
         }
 
         if (isExpire(userSession.getExpireTime())) {//session过期
             //拋出普通的session過期異常
-            throw new BizException(UserErrors.SESSION_EXPIRE);
+            throw new UnauthorizedException(UserErrors.SESSION_EXPIRE);
         }
         return userSession;
     }

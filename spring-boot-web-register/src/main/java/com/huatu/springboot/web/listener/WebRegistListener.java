@@ -21,8 +21,11 @@ public class WebRegistListener implements ApplicationListener {
 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
+        if(!(event instanceof ApplicationReadyEvent) && !(event instanceof ContextClosedEvent)){
+            return;
+        }
         if(webRegister == null){
-            log.warn("null register find...");
+            log.error("null register find...");
             return;
         }
         //org.springframework.boot.context.embedded.EmbeddedServletContainerInitializedEvent 容器启动完成
