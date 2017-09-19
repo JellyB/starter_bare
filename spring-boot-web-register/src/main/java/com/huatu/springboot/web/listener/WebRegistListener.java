@@ -31,7 +31,7 @@ public class WebRegistListener implements ApplicationListener {
             log.info("app start,regist...");
             webRegister.regist();
         }else if(event instanceof ContextClosedEvent){
-            log.info("app start,stop...");
+            log.info("app stop,stop...");
             webRegister.unregister();
         }
     }
