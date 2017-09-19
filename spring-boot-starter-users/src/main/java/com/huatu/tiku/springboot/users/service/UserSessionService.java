@@ -255,6 +255,9 @@ public class UserSessionService {
      * @return
      */
     public UserSession getUserSession(String token){
+        if(StringUtils.isBlank(token)){
+            return null;
+        }
         Map<String,String> serializeSession = sessionRedisTemplate.hgetAll(token);
         if(MapUtils.isNotEmpty(serializeSession)){
 
