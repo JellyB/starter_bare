@@ -17,7 +17,6 @@
     <modules>
         <module>spring-boot-starter-druid</module>
         <module>spring-boot-starter-users</module>
-        <module>starter-demos</module>
         <module>spring-boot-starter-dubbo</module>
         <module>spring-boot-starter-restclient</module>
         <module>spring-boot-starter-executor</module>
