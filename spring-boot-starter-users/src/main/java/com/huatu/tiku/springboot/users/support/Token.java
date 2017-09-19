@@ -20,7 +20,9 @@ public @interface Token {
     String name() default "token";
 
     /**
-     * required和spring集成后不代表头信息不存在，而是说最后的值存不存在，所以是uid，或者user bean
+     * required和spring集成后不代表头信息不存在，而是说最后的值存不存在，所以是uid，或者user bean,设置defaultValue后可以绕过这个为null的报错
+     * default的字符串对于基本类型的转换
+     * simple类型默认返回-1不受此限制
      * @return
      */
     boolean required() default true;

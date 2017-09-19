@@ -54,10 +54,12 @@ public class UserSessionService {
      * @return
      */
     public long getUid(String token) {
-        final String uidStr = getSessionValue(token, UserRedisSessionKeys.id);
         long userId = -1;
-        if(StringUtils.isEmpty(uidStr)){//id存在
-            userId = Long.valueOf(uidStr);
+        if(StringUtils.isNotBlank(token)){
+            final String uidStr = getSessionValue(token, UserRedisSessionKeys.id);
+            if(StringUtils.isEmpty(uidStr)){//id存在
+                userId = Long.valueOf(uidStr);
+            }
         }
         return userId;
     }
