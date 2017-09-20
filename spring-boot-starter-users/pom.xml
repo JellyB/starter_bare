@@ -11,6 +11,7 @@
 
     <groupId>com.huatu.tiku.springboot</groupId>
     <artifactId>spring-boot-starter-users</artifactId>
+    <version>1.0-${project.environment}-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
