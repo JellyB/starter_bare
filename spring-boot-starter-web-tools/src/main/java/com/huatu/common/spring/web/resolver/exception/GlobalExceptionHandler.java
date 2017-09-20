@@ -22,6 +22,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.ValidationException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,7 +35,7 @@ import java.util.List;
 @Slf4j
 public class GlobalExceptionHandler {
     //用于子项目扩展
-    private List<ExceptionResolver> exceptionResolvers;
+    private List<ExceptionResolver> exceptionResolvers = new ArrayList();
     private ErrorResultHandler errorHandler = new SimpleErrorResultHandler();
 
     /**
@@ -135,5 +136,21 @@ public class GlobalExceptionHandler {
             errorResult = optional;
         }
         return errorResult;
+    }
+
+    public List<ExceptionResolver> getExceptionResolvers() {
+        return exceptionResolvers;
+    }
+
+    public ErrorResultHandler getErrorHandler() {
+        return errorHandler;
+    }
+
+    public void setExceptionResolvers(List<ExceptionResolver> exceptionResolvers) {
+        this.exceptionResolvers = exceptionResolvers;
+    }
+
+    public void setErrorHandler(ErrorResultHandler errorHandler) {
+        this.errorHandler = errorHandler;
     }
 }

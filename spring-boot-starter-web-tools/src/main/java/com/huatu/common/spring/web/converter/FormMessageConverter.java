@@ -73,4 +73,12 @@ public class FormMessageConverter extends AbstractHttpMessageConverter<Map<Strin
         StreamUtils.copy(str.toString(), charset, outputMessage.getBody());
     }
 
+    @Override
+    protected boolean canWrite(MediaType mediaType) {
+        if(mediaType == null){
+            return false;
+        }else{
+            return super.canWrite(mediaType);
+        }
+    }
 }
