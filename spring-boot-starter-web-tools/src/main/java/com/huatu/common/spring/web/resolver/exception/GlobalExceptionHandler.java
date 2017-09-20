@@ -12,6 +12,7 @@ import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.HandlerMethod;
@@ -20,7 +21,6 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolationException;
 import javax.xml.bind.ValidationException;
 import java.util.List;
 
@@ -73,7 +73,7 @@ public class GlobalExceptionHandler {
      * @param handlerMethod
      * @param exception
      */
-    @ExceptionHandler(value = {ServletException.class,BindException.class,ArgsValidException.class, ValidationException.class, ConstraintViolationException.class, HttpMessageConversionException.class})
+    @ExceptionHandler(value = {ServletException.class,BindException.class,ArgsValidException.class, ValidationException.class, javax.validation.ValidationException.class, MethodArgumentNotValidException.class,HttpMessageConversionException.class})
     public ModelAndView invalidArgumentsHandler(HttpServletRequest request, HandlerMethod handlerMethod, Exception exception) {
         if(log.isDebugEnabled()){
             log.debug("catch exception : ",exception);
@@ -90,12 +90,12 @@ public class GlobalExceptionHandler {
      * @return
      */
     @ExceptionHandler({HttpRequestMethodNotSupportedException.class, NoHandlerFoundException.class})
-    public ModelAndView notFoundHandler(HttpServletRequest request,HandlerMethod handlerMethod,Exception exception){
+    public ModelAndView notFoundHandler(HttpServletRequest request,Exception exception){
         if(log.isDebugEnabled()){
             log.debug("catch exception : ",exception);
         }
         ErrorResult errorResult = buildByResolvers(exception, CommonErrors.RESOURCE_NOT_FOUND);
-        return errorHandler.handle(request,handlerMethod,errorResult, HttpStatus.NOT_FOUND);
+        return errorHandler.handle(request,null,errorResult, HttpStatus.NOT_FOUND);
     }
 
 

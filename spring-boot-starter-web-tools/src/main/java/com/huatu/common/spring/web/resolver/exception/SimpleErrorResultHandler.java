@@ -1,8 +1,7 @@
 package com.huatu.common.spring.web.resolver.exception;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.alibaba.fastjson.JSON;
 import com.huatu.common.ErrorResult;
-import com.huatu.common.utils.reflect.ClassUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,6 +15,7 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.springframework.web.servlet.view.xml.MappingJackson2XmlView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * 所有方法可被重写，重新注入到GlobalExceptionhandler
@@ -24,15 +24,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Slf4j
 public class SimpleErrorResultHandler implements ErrorResultHandler {
+    private static final MediaType DEFAULT_MEDIATYPE = MediaType.TEXT_HTML;
 
-    private ObjectMapper objectMapper;
-
-    public SimpleErrorResultHandler(){
-        this.objectMapper = new ObjectMapper();
-    }
-    public SimpleErrorResultHandler(ObjectMapper objectMapper){
-        this.objectMapper = objectMapper;
-    }
 
     @Override
     public ModelAndView handle(HttpServletRequest request,HandlerMethod handlerMethod, Object errorResult, HttpStatus status) {
@@ -55,6 +48,9 @@ public class SimpleErrorResultHandler implements ErrorResultHandler {
         if(accept != null){
             return contentType2MediaType(accept);
         }
+        if(handlerMethod == null){
+            return DEFAULT_MEDIATYPE;
+        }
         final RequestMapping requestMapping = handlerMethod.getMethodAnnotation(RequestMapping.class);
         if (requestMapping != null &&  requestMapping.produces()!= null && requestMapping.produces().length>0) {//处理RequestMapping 含有指定输出类型
             return contentType2MediaType(requestMapping.produces()[0]);
@@ -72,7 +68,7 @@ public class SimpleErrorResultHandler implements ErrorResultHandler {
         if(restController != null){
             return MediaType.APPLICATION_JSON;
         }
-        return MediaType.TEXT_HTML;
+        return DEFAULT_MEDIATYPE;
     }
 
     protected MediaType contentType2MediaType(String contentType){
@@ -85,7 +81,7 @@ public class SimpleErrorResultHandler implements ErrorResultHandler {
         if(contentType.startsWith(MediaType.APPLICATION_XML_VALUE)){
             return MediaType.APPLICATION_XML;
         }
-        return MediaType.TEXT_HTML;
+        return DEFAULT_MEDIATYPE;
     }
 
 
@@ -106,7 +102,7 @@ public class SimpleErrorResultHandler implements ErrorResultHandler {
         ModelAndView modelAndView = new ModelAndView(jackson2JsonView);
         /*BeanMap map = new BeanMap(errorResult);
         modelAndView.addAllObjects(map);*/
-        modelAndView.addAllObjects(ClassUtils.getBeanProperties(errorResult));
+        modelAndView.addAllObjects((Map<String, Object>) JSON.toJSON(errorResult));
         return modelAndView;
     }
 
@@ -114,7 +110,7 @@ public class SimpleErrorResultHandler implements ErrorResultHandler {
         final MappingJackson2XmlView jackson2XmlView = new MappingJackson2XmlView();
         jackson2XmlView.setContentType(MediaType.APPLICATION_XML_VALUE+";charset=UTF-8");
         ModelAndView modelAndView = new ModelAndView(jackson2XmlView);
-        modelAndView.addAllObjects(ClassUtils.getBeanProperties(errorResult));
+        modelAndView.addAllObjects((Map<String, Object>) JSON.toJSON(errorResult));
         return modelAndView;
     }
 

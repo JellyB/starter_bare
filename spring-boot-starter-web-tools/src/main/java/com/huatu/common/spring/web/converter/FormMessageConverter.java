@@ -40,6 +40,11 @@ public class FormMessageConverter extends AbstractHttpMessageConverter<Map<Strin
         return false;
     }
 
+    @Override
+    protected boolean canRead(MediaType mediaType) {
+        return false;
+    }
+
     /**
      * unsupport
      * @param clazz
