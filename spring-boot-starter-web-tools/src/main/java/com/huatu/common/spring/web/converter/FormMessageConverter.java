@@ -75,7 +75,7 @@ public class FormMessageConverter extends AbstractHttpMessageConverter<Map<Strin
 
     @Override
     protected boolean canWrite(MediaType mediaType) {
-        if(mediaType == null){
+        if(mediaType == null){ // 由于目前版本的spring不支持自定义消息处理器的顺序，这里对Null处理会有问题
             return false;
         }else{
             return super.canWrite(mediaType);
