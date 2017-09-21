@@ -24,7 +24,7 @@ import java.util.Map;
  */
 @Slf4j
 public class SimpleErrorResultHandler implements ErrorResultHandler {
-    private static final MediaType DEFAULT_MEDIATYPE = MediaType.TEXT_HTML;
+    private static final MediaType DEFAULT_MEDIATYPE = MediaType.APPLICATION_JSON;
 
 
     @Override

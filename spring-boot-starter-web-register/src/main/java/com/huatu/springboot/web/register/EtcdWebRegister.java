@@ -1,9 +1,15 @@
 package com.huatu.springboot.web.register;
 
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
 import lombok.extern.slf4j.Slf4j;
+import mousio.client.retry.RetryNTimes;
 import mousio.etcd4j.EtcdClient;
+import mousio.etcd4j.EtcdSecurityContext;
 import mousio.etcd4j.responses.EtcdAuthenticationException;
 import mousio.etcd4j.responses.EtcdException;
+import mousio.etcd4j.transport.EtcdNettyClient;
+import mousio.etcd4j.transport.EtcdNettyConfig;
 
 import java.io.IOException;
 import java.net.URI;
@@ -41,32 +47,40 @@ public class EtcdWebRegister implements WebRegister {
         this.etcdServerHome = prefix + serverName;
         this.etcdServerNode = etcdServerHome+"/" + host + ":" + port;
 
+        this.etcdClient = buildEtcdClient(this.connectString);
+    }
+
+
+    private EtcdClient buildEtcdClient(String connectString){
         final URI[] etcdServers = Stream.of(connectString.split(",")).map(etcdServer -> URI.create(etcdServer)).toArray(URI[]::new);
-        this.etcdClient = new EtcdClient(etcdServers);
+        EtcdNettyConfig nettyConfig = new EtcdNettyConfig();
+        EventLoopGroup loopGroup = new NioEventLoopGroup(1);
+        nettyConfig.setEventLoopGroup(loopGroup);
+        EtcdNettyClient etcdNettyClient = new EtcdNettyClient(nettyConfig, EtcdSecurityContext.NONE, etcdServers);
+        EtcdClient etcdClient = new EtcdClient(etcdNettyClient);
+        etcdClient.setRetryHandler(new RetryNTimes(1000,3));
+        return etcdClient;
     }
 
     @Override
     public boolean regist() {
         log.info("start register server http(s)://{}:{} to {} success.",host,port,etcdServerNode);
         Throwable throwable = null;
-        for (int i = 0; i < 3; i++) {//循环重试
-            try {
-                etcdClient.put(etcdServerNode, String.format(REGISTER_DATA,host,5,port))
-                        .timeout(3, TimeUnit.SECONDS)
-                        .send().get();
-                log.info("register to {} success.",etcdServerNode);
-                return true;
-            } catch (IOException e) {
-                throwable = e;
-            } catch (EtcdException e) {
-                throwable = e;
-            } catch (EtcdAuthenticationException e) {
-                log.error("register fail.",e);
-                return false;
-            } catch (TimeoutException e) {
-                throwable = e;
-            }
-            sleep(1000);
+        try {
+            etcdClient.put(etcdServerNode, String.format(REGISTER_DATA,host,5,port))
+                    .timeout(3, TimeUnit.SECONDS)
+                    .send().get();
+            log.info("register to {} success.",etcdServerNode);
+            return true;
+        } catch (IOException e) {
+            throwable = e;
+        } catch (EtcdException e) {
+            throwable = e;
+        } catch (EtcdAuthenticationException e) {
+            log.error("register fail.",e);
+            return false;
+        } catch (TimeoutException e) {
+            throwable = e;
         }
 
         //注册失败
@@ -79,24 +93,24 @@ public class EtcdWebRegister implements WebRegister {
     @Override
     public boolean unregister() {
         log.info("unregister the server from etcd. node={}",etcdServerNode);
-        for (int i = 0; i < 3; i++) {
-            try {
-                etcdClient.delete(etcdServerNode).send().get();
-                return true;
-            } catch (IOException e) {
-                log.warn("unregister fail.",e);
-            } catch (EtcdException e) {
-                log.warn("unregister fail.",e);
-            } catch (EtcdAuthenticationException e) {
-                log.warn("unregister fail.",e);
-                break;
-            } catch (TimeoutException e) {
-                log.warn("unregister fail.",e);
-            }
-            sleep(1000);
+        try {
+            etcdClient.delete(etcdServerNode).send().get();
+            log.info("unregister the server from etcd success. node={}",etcdServerNode);
+            return true;
+        } catch (IOException e) {
+            log.warn("unregister fail.",e);
+        } catch (EtcdException e) {
+            log.warn("unregister fail.",e);
+        } catch (EtcdAuthenticationException e) {
+            log.warn("unregister fail.",e);
+        } catch (TimeoutException e) {
+            log.warn("unregister fail.",e);
         }
-        sleep(2000);
-        log.info("unregister the server from etcd success. node={}",etcdServerNode);
+        try {
+            etcdClient.close();
+        } catch (IOException e) {
+            log.error("close etcdclient error...",e);
+        }
         return false;
     }
 
