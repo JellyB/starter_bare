@@ -7,11 +7,9 @@ import com.huatu.springboot.web.listener.WebRegistListener;
 import com.huatu.springboot.web.register.WebRegister;
 import com.huatu.springboot.web.register.etcd.EtcdWebRegister;
 import lombok.extern.slf4j.Slf4j;
-import mousio.etcd4j.EtcdClient;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -37,7 +35,6 @@ public class RegisterAutoConfiguration {
         this.registerConfig = registerConfig;
     }
 
-    @ConditionalOnClass(EtcdClient.class)
     @ConditionalOnMissingBean(WebRegister.class)
     @Bean
     public EtcdWebRegister etcdWebRegister(){
