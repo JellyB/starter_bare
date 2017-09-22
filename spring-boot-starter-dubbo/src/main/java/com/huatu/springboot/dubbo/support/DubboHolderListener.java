@@ -36,7 +36,7 @@ public class DubboHolderListener implements ApplicationListener {
                         }
                     }
                 }, "Dubbo-Holder");
-                holdThread.setDaemon(false);
+                holdThread.setDaemon(true);
                 holdThread.start();
             }
         }
