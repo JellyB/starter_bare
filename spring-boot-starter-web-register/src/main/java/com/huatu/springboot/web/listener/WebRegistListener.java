@@ -2,17 +2,20 @@ package com.huatu.springboot.web.listener;
 
 import com.huatu.springboot.web.register.WebRegister;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 
 /**
+ * 最好的应该是续约的方式来注册，因为可能存在被强杀或者不可控的因素
  * @author hanchao
  * @date 2017/9/18 14:44
  */
 @Slf4j
-public class WebRegistListener implements ApplicationListener {
+public class WebRegistListener implements ApplicationListener,ExitCodeGenerator,DisposableBean {
     private WebRegister webRegister;
 
     public WebRegistListener(WebRegister webRegister) {
@@ -47,4 +50,13 @@ public class WebRegistListener implements ApplicationListener {
     }
 
 
+    @Override
+    public int getExitCode() {
+        return 0;
+    }
+
+    @Override
+    public void destroy() throws Exception {
+
+    }
 }

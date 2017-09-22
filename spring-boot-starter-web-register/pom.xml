@@ -15,13 +15,8 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
             <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mousio</groupId>
-            <artifactId>etcd4j</artifactId>
         </dependency>
 
         <dependency>
