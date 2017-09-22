@@ -38,7 +38,7 @@ public class WebRegistListener implements ApplicationListener,ExitCodeGenerator,
             webRegister.regist();
         }else if(event instanceof ContextClosedEvent){
             //目前遇到的问题是这里报错，会阻塞关闭进程，只能通过强杀
-            log.info("app stop,stop...");
+            log.info("app stop,unregist...");
             try {
                 if(!webRegister.unregister()){
                     log.error("unable to unregister,the {} retrun false ! ",webRegister.getClass());

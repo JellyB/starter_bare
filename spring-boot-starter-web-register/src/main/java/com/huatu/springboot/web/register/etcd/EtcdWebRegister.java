@@ -18,6 +18,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -26,8 +27,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 @Slf4j
 public class EtcdWebRegister implements WebRegister {
-    public static final String PATH_PRE = "/v2/keys/";
-    public static final String REGISTER_DATA= "{\"host\":\"%s\",\"weight\":%s,\"port\":%s}";
+    private static int TTL = 120;//默认节点有效时间
+    private static int POLLING = 60; //默认续约间隔时间
+    private static final String PATH_PRE = "/v2/keys/";
+    private static final String REGISTER_DATA= "{\"host\":\"%s\",\"weight\":%s,\"port\":%s}";
+
 
     private String connectString;
     private String host;
@@ -62,47 +66,50 @@ public class EtcdWebRegister implements WebRegister {
 
     private boolean doRegist(){
         boolean success = false;
-        for (String etcdServer : etcdServers) {
-            URL url;
-            HttpURLConnection connection = null;
-            try {
-                url = new URL(etcdServer+PATH_PRE+etcdServerNode);
-                connection = buildEtcdConnection(url,HttpMethod.PUT);
+        //因为涉及到续约，所以默认失败则持续请求,最多三次
+        for (int i = 0; i < 3; i++) {
+            for (String etcdServer : etcdServers) {
+                URL url;
+                HttpURLConnection connection = null;
+                try {
+                    url = new URL(etcdServer+PATH_PRE+etcdServerNode);
+                    connection = buildEtcdConnection(url,HttpMethod.PUT);
 
-                Node.Request request = Node.Request.builder()
-                        .value(String.format(REGISTER_DATA,host,5,port))
-                        .ttl(120)
-                        .build();
+                    Node.Request request = Node.Request.builder()
+                            .value(String.format(REGISTER_DATA,host,5,port))
+                            .ttl(TTL)
+                            .build();
 
-                OutputStream out = connection.getOutputStream();
-                out.write(buildBody(request).getBytes(CharsetConsts.DEFAULT_CHARSET));
-                out.flush();
-                out.close();
-                InputStream in;
-                if (connection.getResponseCode() == 200 || connection.getResponseCode() == 201){
-                    success = true;
-                    in = connection.getInputStream();
-                }else{
-                    in = connection.getErrorStream();
-                }
-                String response = IOUtils.toString(in);
-                in.close();
-                log.info("request node: {} , result: {} , response: {} ",etcdServer,success,response);
-                if(success){
-                    break;
-                }
-            } catch(Exception e){
-                log.error("request node : {} failed...",etcdServer,e);
-            } finally {
-                if(connection != null){
-                    try {
-                        connection.disconnect();
-                    } catch(Exception e){
+                    OutputStream out = connection.getOutputStream();
+                    out.write(buildBody(request).getBytes(CharsetConsts.DEFAULT_CHARSET));
+                    out.flush();
+                    out.close();
+                    InputStream in;
+                    if (connection.getResponseCode() == 200 || connection.getResponseCode() == 201){
+                        success = true;
+                        in = connection.getInputStream();
+                    }else{
+                        in = connection.getErrorStream();
+                    }
+                    String response = IOUtils.toString(in);
+                    in.close();
+                    log.info("request node: {} , result: {} , response: {} ",etcdServer,success,response);
+                    if(success){
+                        return true;
+                    }
+                } catch(Exception e){
+                    log.error("request node : {} failed...",etcdServer,e);
+                } finally {
+                    if(connection != null){
+                        try {
+                            connection.disconnect();
+                        } catch(Exception e){
+                        }
                     }
                 }
             }
         }
-        return success;
+        return false;
     }
 
 
@@ -116,7 +123,7 @@ public class EtcdWebRegister implements WebRegister {
                 public void run() {
                     for(;running;){
                         try {
-                            Thread.sleep(60000); // 一分钟续约一次
+                            Thread.sleep(TimeUnit.MILLISECONDS.convert(POLLING, TimeUnit.SECONDS)); // 一分钟续约一次
                             doRegist();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -196,12 +203,6 @@ public class EtcdWebRegister implements WebRegister {
         connection.setConnectTimeout(1000);
         connection.setReadTimeout(5000);
         return connection;
-    }
-
-    public static void main(String[] args) throws IOException {
-        EtcdWebRegister etcdWebRegister = new EtcdWebRegister("http://192.168.100.19:2379/", "192.168.100.19", 2379, "test-server", "/test-servers/");
-        etcdWebRegister.regist();
-        System.in.read();
     }
 
 }
