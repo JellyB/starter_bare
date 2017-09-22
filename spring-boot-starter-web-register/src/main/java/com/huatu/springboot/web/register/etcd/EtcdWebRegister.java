@@ -43,6 +43,7 @@ public class EtcdWebRegister implements WebRegister {
 
     private static Thread maintainThread;
     private static AtomicBoolean _threadLock = new AtomicBoolean(false);
+    private static volatile boolean running = true;
 
 
     public EtcdWebRegister(String connectString, String host, int port, String serverName, String prefix){
@@ -65,7 +66,7 @@ public class EtcdWebRegister implements WebRegister {
             URL url;
             HttpURLConnection connection = null;
             try {
-                url = new URL(etcdServer+PATH_PRE+etcdServerHome);
+                url = new URL(etcdServer+PATH_PRE+etcdServerNode);
                 connection = buildEtcdConnection(url,HttpMethod.PUT);
 
                 Node.Request request = Node.Request.builder()
@@ -77,10 +78,13 @@ public class EtcdWebRegister implements WebRegister {
                 out.write(buildBody(request).getBytes(CharsetConsts.DEFAULT_CHARSET));
                 out.flush();
                 out.close();
+                InputStream in;
                 if (connection.getResponseCode() == 200 || connection.getResponseCode() == 201){
                     success = true;
+                    in = connection.getInputStream();
+                }else{
+                    in = connection.getErrorStream();
                 }
-                InputStream in = connection.getInputStream();
                 String response = IOUtils.toString(in);
                 in.close();
                 log.info("request node: {} , result: {} , response: {} ",etcdServer,success,response);
@@ -88,7 +92,7 @@ public class EtcdWebRegister implements WebRegister {
                     break;
                 }
             } catch(Exception e){
-                log.error("request node : {} failed...",etcdServer);
+                log.error("request node : {} failed...",etcdServer,e);
             } finally {
                 if(connection != null){
                     try {
@@ -110,14 +114,18 @@ public class EtcdWebRegister implements WebRegister {
             maintainThread = new Thread(){
                 @Override
                 public void run() {
-                    try {
-                        Thread.sleep(60); // 一分钟续约一次
-                        doRegist();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    for(;running;){
+                        try {
+                            Thread.sleep(60000); // 一分钟续约一次
+                            doRegist();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             };
+            maintainThread.setDaemon(true);
+            maintainThread.start();
         }
         return doRegist();
     }
@@ -125,17 +133,21 @@ public class EtcdWebRegister implements WebRegister {
     @Override
     public boolean unregister() {
         log.info("start unregister the server from etcd. node={}",etcdServerNode);
+        running = false;
         boolean success = false;
         for (String etcdServer : etcdServers) {
             URL url;
             HttpURLConnection connection = null;
             try {
-                url = new URL(etcdServer+PATH_PRE+etcdServerHome);
+                url = new URL(etcdServer+PATH_PRE+etcdServerNode);
                 connection = buildEtcdConnection(url,HttpMethod.DELETE);
+                InputStream in;
                 if (connection.getResponseCode() == 200 || connection.getResponseCode() == 201){
                     success = true;
+                    in = connection.getInputStream();
+                }else{
+                    in = connection.getErrorStream();
                 }
-                InputStream in = connection.getInputStream();
                 String response = IOUtils.toString(in);
                 in.close();
                 log.info("request node: {} , result: {} , response: {} ",etcdServer,success,response);
@@ -143,7 +155,7 @@ public class EtcdWebRegister implements WebRegister {
                     break;
                 }
             } catch(Exception e){
-                log.error("request node : {} failed...",etcdServer);
+                log.error("request node : {} failed...",etcdServer,e);
             } finally {
                 if(connection != null){
                     try {
@@ -164,7 +176,7 @@ public class EtcdWebRegister implements WebRegister {
      */
     private String buildBody(Node.Request request){
         Map<String,Object> map = (Map) JSON.toJSON(request);
-        return Joiner.on("&").withKeyValueSeparator("&").join(map);
+        return Joiner.on("&").withKeyValueSeparator("=").join(map);
     }
 
     private HttpURLConnection buildEtcdConnection(URL url,HttpMethod method) throws IOException {
@@ -185,4 +197,11 @@ public class EtcdWebRegister implements WebRegister {
         connection.setReadTimeout(5000);
         return connection;
     }
+
+    public static void main(String[] args) throws IOException {
+        EtcdWebRegister etcdWebRegister = new EtcdWebRegister("http://192.168.100.19:2379/", "192.168.100.19", 2379, "test-server", "/test-servers/");
+        etcdWebRegister.regist();
+        System.in.read();
+    }
+
 }
