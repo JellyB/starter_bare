@@ -9,8 +9,7 @@ import com.huatu.springboot.web.register.etcd.EtcdWebRegister;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +25,7 @@ import java.util.Optional;
 @Slf4j
 @EnableApolloConfig("htonline.web-register")
 @EnableConfigurationProperties(RegisterConfig.class)
+@ConditionalOnMissingClass("org.springframework.boot.test.context.SpringBootTest") //测试环境下不允许运行
 public class RegisterAutoConfiguration {
     private RegisterConfig registerConfig;
     @Autowired
@@ -64,6 +64,7 @@ public class RegisterAutoConfiguration {
 
     @Bean
     @ConditionalOnBean(WebRegister.class)
+    @ConditionalOnWebApplication
     public WebRegistListener webRegistListener(@Autowired WebRegister webRegister){
         return new WebRegistListener(webRegister);
     }

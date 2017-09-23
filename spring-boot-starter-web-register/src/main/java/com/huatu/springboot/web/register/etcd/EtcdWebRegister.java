@@ -124,7 +124,9 @@ public class EtcdWebRegister implements WebRegister {
                     for(;running;){
                         try {
                             Thread.sleep(TimeUnit.MILLISECONDS.convert(POLLING, TimeUnit.SECONDS)); // 一分钟续约一次
-                            doRegist();
+                            if(running) {
+                                doRegist();
+                            }
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
