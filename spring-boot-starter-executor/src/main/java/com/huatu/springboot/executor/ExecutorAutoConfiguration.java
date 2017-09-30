@@ -1,15 +1,20 @@
 package com.huatu.springboot.executor;
 
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
+import com.huatu.springboot.executor.endpoint.ExecutorEndPoint;
 import com.huatu.springboot.executor.support.DefaultAsyncUncaughtExceptionHandler;
 import com.huatu.springboot.executor.support.ExecutorProperties;
 import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
+import org.springframework.boot.actuate.endpoint.AbstractEndpoint;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import java.util.concurrent.Executors;
 
 /**
  * @author hanchao
@@ -43,4 +48,17 @@ public class ExecutorAutoConfiguration {
     public DefaultAsyncUncaughtExceptionHandler asyncUncaughtExceptionHandler(){
         return new DefaultAsyncUncaughtExceptionHandler();
     }
+
+    @ConditionalOnBean(Executors.class)
+    @ConditionalOnClass(AbstractEndpoint.class)
+    public static class ExecutorMonitorAutoConfiguration{
+        @Bean
+        public ExecutorEndPoint executorEndPoint(){
+            return new ExecutorEndPoint();
+        }
+    }
+
+    // TODO
+    // 多线程池集合，可用来做不同业务间的线程池隔离，异步request，rxjava等，以及监控
+    // 线程池命名以及根据命名获取注入
 }
