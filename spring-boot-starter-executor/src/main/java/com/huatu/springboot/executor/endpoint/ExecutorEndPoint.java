@@ -1,5 +1,6 @@
 package com.huatu.springboot.executor.endpoint;
 
+import com.huatu.springboot.executor.support.NamedThreadPoolTaskExecutor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.actuate.endpoint.AbstractEndpoint;
@@ -31,8 +32,12 @@ public class ExecutorEndPoint extends AbstractEndpoint<Map> implements Applicati
         if(executors != null){
             executors.forEach((name,executor) -> {
                 Map<String,String> info = new HashMap<>();
-                info.put("name",name);
-                info.put("status",executor.toString());// TODO
+                if(executor instanceof NamedThreadPoolTaskExecutor){
+                    info.put("name",((NamedThreadPoolTaskExecutor) executor).getName());
+                }else{
+                    info.put("name",name);
+                } //TODO 由spring bean命名或者传入
+                info.put("status",executor.toString());// TODO 细化拆分
                 result.put(name,info);
             });
         }
