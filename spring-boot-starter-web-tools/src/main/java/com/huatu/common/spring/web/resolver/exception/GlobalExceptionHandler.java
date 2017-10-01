@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 未授权异常
+     * 其他业务异常
      * @param request
      * @param handlerMethod
      * @param exception

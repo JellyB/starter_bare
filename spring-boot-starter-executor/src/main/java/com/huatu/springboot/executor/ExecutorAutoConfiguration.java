@@ -21,18 +21,19 @@ import java.util.concurrent.Executors;
  * @date 2017/9/12 20:46
  */
 @ConditionalOnClass(ThreadPoolTaskExecutor.class)
-@ConditionalOnProperty(value = "htonline.executor.enabled",havingValue = "true",matchIfMissing = false) //必填
+@ConditionalOnProperty(value = "htonline.executor.enabled", havingValue = "true", matchIfMissing = false) //必填
 @Configuration
 @EnableApolloConfig("htonline.executor")
 @EnableConfigurationProperties(ExecutorProperties.class)
 public class ExecutorAutoConfiguration {
     private final ExecutorProperties executorProperties;
-    public ExecutorAutoConfiguration(ExecutorProperties executorProperties){
+
+    public ExecutorAutoConfiguration(ExecutorProperties executorProperties) {
         this.executorProperties = executorProperties;
     }
 
     @Bean
-    public ThreadPoolTaskExecutor threadPoolTaskExecutor(){
+    public ThreadPoolTaskExecutor coreThreadPool() {
         ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
         threadPoolTaskExecutor.setCorePoolSize(executorProperties.getCorePoolSize());
         threadPoolTaskExecutor.setMaxPoolSize(executorProperties.getMaxPoolSize());
@@ -45,15 +46,15 @@ public class ExecutorAutoConfiguration {
 
     @Bean
     @ConditionalOnClass(SimpleAsyncUncaughtExceptionHandler.class)
-    public DefaultAsyncUncaughtExceptionHandler asyncUncaughtExceptionHandler(){
+    public DefaultAsyncUncaughtExceptionHandler asyncUncaughtExceptionHandler() {
         return new DefaultAsyncUncaughtExceptionHandler();
     }
 
     @ConditionalOnBean(Executors.class)
     @ConditionalOnClass(AbstractEndpoint.class)
-    public static class ExecutorMonitorAutoConfiguration{
+    public static class ExecutorMonitorAutoConfiguration {
         @Bean
-        public ExecutorEndPoint executorEndPoint(){
+        public ExecutorEndPoint executorEndPoint() {
             return new ExecutorEndPoint();
         }
     }
