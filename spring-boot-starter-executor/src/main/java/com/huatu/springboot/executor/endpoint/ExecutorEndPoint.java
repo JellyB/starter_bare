@@ -7,10 +7,12 @@ import org.springframework.boot.actuate.endpoint.AbstractEndpoint;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author hanchao
@@ -31,13 +33,36 @@ public class ExecutorEndPoint extends AbstractEndpoint<Map> implements Applicati
         result.put("size",executors == null ? 0 : executors.size());
         if(executors != null){
             executors.forEach((name,executor) -> {
-                Map<String,String> info = new HashMap<>();
+                Map<String,Object> info = new HashMap<>();
                 if(executor instanceof NamedThreadPoolTaskExecutor){
                     info.put("name",((NamedThreadPoolTaskExecutor) executor).getName());
                 }else{
                     info.put("name",name);
                 } //TODO 由spring bean命名或者传入
-                info.put("status",executor.toString());// TODO 细化拆分
+
+                if(executor instanceof ThreadPoolExecutor || executor instanceof ThreadPoolTaskExecutor){
+                    ThreadPoolExecutor instance;
+                    info.put("type",executor.getClass().getCanonicalName());
+                    instance = executor instanceof ThreadPoolExecutor ? (ThreadPoolExecutor)executor : ((ThreadPoolTaskExecutor)executor).getThreadPoolExecutor();
+
+                    ExecutorInfo executorInfo = ExecutorInfo.builder()
+                            .coreSize(instance.getCorePoolSize())
+                            .maxSize(instance.getMaximumPoolSize())
+                            .active(instance.getActiveCount())
+                            .taskCount(instance.getTaskCount())
+                            .completedTaskCount(instance.getCompletedTaskCount())
+                            .largestPoolSize(instance.getLargestPoolSize())
+                            .queueSize(instance.getQueue().size())
+                            .queueClass(instance.getQueue().getClass().getCanonicalName())
+                            .build()
+                            .setStatus(instance.isTerminated());
+
+                    info.put("info",executorInfo);
+
+                }else{
+                    info.put("type","unknown");
+                }
+
                 result.put(name,info);
             });
         }

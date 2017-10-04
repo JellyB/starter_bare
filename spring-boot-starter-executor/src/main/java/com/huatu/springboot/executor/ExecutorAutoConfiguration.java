@@ -6,15 +6,12 @@ import com.huatu.springboot.executor.support.DefaultAsyncUncaughtExceptionHandle
 import com.huatu.springboot.executor.support.ExecutorProperties;
 import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
 import org.springframework.boot.actuate.endpoint.AbstractEndpoint;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-
-import java.util.concurrent.Executors;
 
 /**
  * @author hanchao
@@ -50,7 +47,6 @@ public class ExecutorAutoConfiguration {
         return new DefaultAsyncUncaughtExceptionHandler();
     }
 
-    @ConditionalOnBean(Executors.class)
     @ConditionalOnClass(AbstractEndpoint.class)
     public static class ExecutorMonitorAutoConfiguration {
         @Bean
