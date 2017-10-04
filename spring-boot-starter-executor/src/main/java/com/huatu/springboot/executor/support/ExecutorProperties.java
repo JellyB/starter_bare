@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class ExecutorProperties {
     private int corePoolSize = 1;
     private int keepAliveSeconds = 60;
-    private int maxPoolSize = Integer.MAX_VALUE;
+    private int maxPoolSize = 10;
     private int queueCapacity = Integer.MAX_VALUE;
     private boolean allowCoreThreadTimeOut = false;
 }
