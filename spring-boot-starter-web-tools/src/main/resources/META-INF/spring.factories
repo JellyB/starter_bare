@@ -1,4 +1,4 @@
 # 自定义的注解自动需要实现DeferredImportSelector,参照其实现类
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.huatu.common.spring.web.resolver.exception.GlobalExceptionHandler,\
-  com.huatu.common.spring.web.advice.WrapperResponseBodyAdvice
+  com.huatu.springboot.web.tools.exception.GlobalExceptionHandler,\
+  com.huatu.springboot.web.tools.advice.WrapperResponseBodyAdvice

@@ -21,4 +21,5 @@ public class UserRedisSessionKeys {
      */
     public static final String catgory ="catgory";//知识点类目
     public static final String qcount="qcount";//知识点类目
+
 }

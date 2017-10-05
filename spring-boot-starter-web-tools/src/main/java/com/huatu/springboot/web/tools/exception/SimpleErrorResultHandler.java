@@ -1,4 +1,4 @@
-package com.huatu.common.spring.web.resolver.exception;
+package com.huatu.springboot.web.tools.exception;
 
 import com.alibaba.fastjson.JSON;
 import com.huatu.common.ErrorResult;

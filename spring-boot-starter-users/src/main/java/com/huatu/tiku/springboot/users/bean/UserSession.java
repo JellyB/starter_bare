@@ -22,6 +22,7 @@ public class UserSession {
     private long expireTime;
     private String oldToken;
     private String newDiveceLoginTime;
+    @Deprecated
     private int category;
     private int qcount;
 }

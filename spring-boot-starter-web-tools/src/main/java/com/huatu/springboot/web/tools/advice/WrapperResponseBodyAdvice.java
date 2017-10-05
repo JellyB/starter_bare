@@ -1,4 +1,4 @@
-package com.huatu.common.spring.web.advice;
+package com.huatu.springboot.web.tools.advice;
 
 import com.huatu.common.Result;
 import com.huatu.common.SuccessResponse;
