@@ -6,8 +6,8 @@ package com.huatu.tiku.springboot.basic.subject;
  * @date 2017/10/6 15:40
  */
 public enum SubjectEnum {
-    GONGWUYUAN(10000,"公务员",1000),
-    SHIYEDANWEI(30000,"事业单位",1001),
+    GONGWUYUAN(1,"公务员",1000),
+    SHIYEDANWEI(3,"事业单位",1001),
     JIAOSHI(200100045,"教师",1003),
     JINRONG(200100002,"金融",1005),
     YILIAO(200100000,"医疗",1004),
