@@ -12,10 +12,9 @@ public class Subject implements Serializable{
     private static final long serialVersionUID = 1L;
     private int id;
     private String name;
-    private int parent;
-    private int type;
+    private Subject parent;
     private List<Subject> childrens;
-    private int status;
+    private boolean tiku;
 
 
     public int getId() {
@@ -34,20 +33,20 @@ public class Subject implements Serializable{
         this.name = name;
     }
 
-    public int getParent() {
+    public Subject getParent() {
         return parent;
     }
 
-    void setParent(int parent) {
+    void setParent(Subject parent) {
         this.parent = parent;
     }
 
-    public int getType() {
-        return type;
+    public boolean isTiku() {
+        return tiku;
     }
 
-    void setType(int type) {
-        this.type = type;
+    void setTiku(boolean tiku) {
+        this.tiku = tiku;
     }
 
     public List<Subject> getChildrens() {
@@ -56,14 +55,6 @@ public class Subject implements Serializable{
 
     void setChildrens(List<Subject> childrens) {
         this.childrens = childrens;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    void setStatus(int status) {
-        this.status = status;
     }
 
     public static class Type {
