@@ -1,15 +1,18 @@
-package com.huatu.springboot.web.core;
+package com.huatu.springboot.web.register.core;
 
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
 import com.google.common.primitives.Ints;
 import com.huatu.common.utils.web.IpUtil;
-import com.huatu.springboot.web.listener.WebRegistListener;
 import com.huatu.springboot.web.register.WebRegister;
 import com.huatu.springboot.web.register.etcd.EtcdWebRegister;
+import com.huatu.springboot.web.register.listener.WebRegistListener;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.*;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

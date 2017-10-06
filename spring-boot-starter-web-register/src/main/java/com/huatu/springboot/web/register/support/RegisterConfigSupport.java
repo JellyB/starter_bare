@@ -1,6 +1,6 @@
-package com.huatu.springboot.web.support;
+package com.huatu.springboot.web.register.support;
 
-import com.huatu.springboot.web.core.RegisterConfig;
+import com.huatu.springboot.web.register.core.RegisterConfig;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;

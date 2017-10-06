@@ -1,4 +1,4 @@
-package com.huatu.springboot.web.core;
+package com.huatu.springboot.web.register.core;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

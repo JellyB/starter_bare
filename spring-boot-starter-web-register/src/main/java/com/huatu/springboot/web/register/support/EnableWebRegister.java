@@ -1,6 +1,6 @@
-package com.huatu.springboot.web.support;
+package com.huatu.springboot.web.register.support;
 
-import com.huatu.springboot.web.core.RegisterAutoConfiguration;
+import com.huatu.springboot.web.register.core.RegisterAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
 

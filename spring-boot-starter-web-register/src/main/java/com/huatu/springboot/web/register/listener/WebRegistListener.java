@@ -1,4 +1,4 @@
-package com.huatu.springboot.web.listener;
+package com.huatu.springboot.web.register.listener;
 
 import com.huatu.springboot.web.register.WebRegister;
 import lombok.extern.slf4j.Slf4j;
