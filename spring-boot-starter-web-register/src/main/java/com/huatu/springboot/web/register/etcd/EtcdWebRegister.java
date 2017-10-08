@@ -46,7 +46,7 @@ public class EtcdWebRegister implements WebRegister {
     private List<String> etcdServers;
 
     private static Thread maintainThread;
-    private static AtomicBoolean _threadLock = new AtomicBoolean(false);
+    private static AtomicBoolean threadInitLock = new AtomicBoolean(false);
     private static volatile boolean running = true;
 
 
@@ -117,7 +117,7 @@ public class EtcdWebRegister implements WebRegister {
     @Override
     public boolean regist() {
         log.info("start register server http(s)://{}:{} to {} .",host,port,etcdServerNode);
-        if(_threadLock.compareAndSet(false,true)){
+        if(threadInitLock.compareAndSet(false,true)){
             maintainThread = new Thread(){
                 @Override
                 public void run() {

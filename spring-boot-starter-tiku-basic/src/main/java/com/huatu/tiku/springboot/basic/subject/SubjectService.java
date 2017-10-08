@@ -30,7 +30,7 @@ public class SubjectService implements ConfigSubscriber{
     //根级节点（业务上，根节点才是subject，上层可能是定义节点或考试类型,只是再表现形式上统一称为）
     private static Map<Integer,Subject> subjectMapping = Maps.newHashMap();
 
-    private static volatile String _sign = "";
+    private static volatile String subjectConfigSign = "";
     /**
      * 使用配置
      * @param config
@@ -50,7 +50,7 @@ public class SubjectService implements ConfigSubscriber{
     public void update(ConfigChange configChange) {
         log.debug(">>> subject changed,oldValue:{} -> newValue:{}",configChange.getOldValue(),configChange.getNewValue());
         String sign = DigestUtils.md5Hex(configChange.getNewValue());
-        if(Objects.equals(sign,_sign)){
+        if(Objects.equals(sign, subjectConfigSign)){
             log.debug(">>> subjects not really changed!!!");
             return;
         }
@@ -66,8 +66,8 @@ public class SubjectService implements ConfigSubscriber{
         log.debug(">>> load subjects from config...");
         //
         ObjectMapper objectMapper = new ObjectMapper();
-        List<Subject> _subjectList = Lists.newArrayList();
-        Map<Integer,Subject> _subjectMapping = Maps.newHashMap();
+        List<Subject> subjectListTemp = Lists.newArrayList();
+        Map<Integer,Subject> subjectMappingTemp = Maps.newHashMap();
 
         List<Subject> tops = objectMapper.readValue(config,new TypeReference<List<Subject>>(){});
 
@@ -75,10 +75,10 @@ public class SubjectService implements ConfigSubscriber{
         for (Subject subject : tops) {
             //递归组装
             RecursionUtils.collect(subject,(t) -> {
-                _subjectList.add(t);
+                subjectListTemp.add(t);
                 List<Subject> childrens = t.getChildrens();
                 if(CollectionUtils.isEmpty(childrens)){
-                    _subjectMapping.put(t.getId(),t);
+                    subjectMappingTemp.put(t.getId(),t);
                 }else{
                     for (Subject children : childrens) {
                         children.setParent(t);
@@ -88,12 +88,12 @@ public class SubjectService implements ConfigSubscriber{
             });
         }
 
-        //_subjectMapping = _subjectList.stream().collect(Collectors.toMap(Subject::getId, Function.identity()));
+        //subjectMappingTemp = subjectListTemp.stream().collect(Collectors.toMap(Subject::getId, Function.identity()));
 
         //直接修改引用地址，避免线程安全问题
-        subjectList = _subjectList;
-        subjectMapping = _subjectMapping;
-        _sign = DigestUtils.md5Hex(config);
+        subjectList = subjectListTemp;
+        subjectMapping = subjectMappingTemp;
+        subjectConfigSign = DigestUtils.md5Hex(config);
     }
 
 
