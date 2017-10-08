@@ -23,6 +23,7 @@
         <module>spring-boot-starter-web-register</module>
         <module>spring-boot-starter-web-tools</module>
         <module>spring-boot-starter-tiku-basic</module>
+        <module>spring-boot-starter-cache-manage</module>
     </modules>
 
 </project>

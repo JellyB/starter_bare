@@ -6,6 +6,7 @@ import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
 
 /**
+ * TODO 通过wrapper到真正的监控页面查看druid的信息
  * @author hanchao
  * @date 2017/1/14 22:30
  */
@@ -17,5 +18,6 @@ import javax.servlet.annotation.WebServlet;
                 @WebInitParam(name="loginPassword",value="2017@)!&"),// 密码
                 @WebInitParam(name="resetEnable",value="false")// 禁用HTML页面上的“Reset All”功能
         })
+@Deprecated
 public class DruidStatServlet extends StatViewServlet{
 }

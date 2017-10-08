@@ -1,6 +1,6 @@
 package com.huatu.springboot.web.tools.converter;
 
-import org.omg.CORBA.Object;
+import com.huatu.common.utils.web.RequestUtil;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -10,9 +10,7 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -60,17 +58,7 @@ public class FormMessageConverter extends AbstractHttpMessageConverter<Map<Strin
 
     @Override
     protected void writeInternal(Map<String, Object> stringObjectMap, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
-        StringBuffer str = new StringBuffer();
-        for(Iterator<Map.Entry<String, Object>> it = stringObjectMap.entrySet().iterator(); it.hasNext();){
-            Map.Entry<String, Object> entry = it.next();
-            if(entry.getValue() != null){
-                str.append(entry.getKey()+"="+ URLEncoder.encode(String.valueOf(entry.getValue()),charset.name()));
-            }
-            if(it.hasNext()){
-                str.append("&");
-            }
-        }
-        StreamUtils.copy(str.toString(), charset, outputMessage.getBody());
+        StreamUtils.copy(RequestUtil.expandUrl(stringObjectMap,charset), charset, outputMessage.getBody());
     }
 
     @Override
