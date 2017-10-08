@@ -47,12 +47,25 @@
 >* delInside，针对进程内缓存使用
 
 
-- get访问方式为/_monitor/cacheManage?_action=get&id=1,消息体如下,有url转换map的需求需要在管理端实现：
+- get访问方式为/_monitor/cacheManage?_action=get&id=1,消息体如下(两种方式兼容):
 
 ```json
 {
-  "map":{"categoryid":1000}
+  "map":
+  {
+    "categoryid":1000,
+    "priceid":2
+  }
 }
+
 
 ```
 
+```json
+//兼容
+
+{
+  "map":"categoryid=1000&priceid=2"
+}
+
+```

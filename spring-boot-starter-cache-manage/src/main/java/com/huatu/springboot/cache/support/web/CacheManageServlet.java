@@ -1,12 +1,15 @@
 package com.huatu.springboot.cache.support.web;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONException;
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Ints;
 import com.huatu.common.CommonErrors;
 import com.huatu.common.SuccessResponse;
 import com.huatu.common.spring.cache.Cached;
 import com.huatu.common.spring.cache.CachedInfoHolder;
+import com.huatu.common.utils.reflect.BeanUtil;
+import com.huatu.common.utils.web.RequestUtil;
 import com.huatu.springboot.cache.spel.SpelExecutor;
 import com.huatu.springboot.cache.support.CacheManageEndPoint;
 import org.apache.commons.io.IOUtils;
@@ -160,7 +163,25 @@ public class CacheManageServlet extends HttpServlet {
             String paramName = cacheParam.getValue();
             Object value = reqParams.get(paramName);
             Class type = cacheParam.getType();
-            execParams.put(paramName,JSON.parseObject(JSON.toJSONString(value),type));
+            try {
+                execParams.put(paramName,JSON.parseObject(JSON.toJSONString(value),type));
+            } catch(JSONException e){
+                //可能不是对应的类型,尝试通过url方式转换
+                if (value instanceof String){
+                    try {
+                        Map guessParam = RequestUtil.decodeUrl(String.valueOf(value));
+                        if(Map.class.isAssignableFrom(type)){
+                            execParams.put(paramName,guessParam);
+                        }else{
+                            execParams.put(paramName, BeanUtil.fromMap(type,guessParam));
+                        }
+                    } catch(Exception e1){
+                        e.printStackTrace();
+                    }
+                }else{
+                    e.printStackTrace();
+                }
+            }
         }
         return executor.execute(cachedInfo.getKey(), execParams);
     }
