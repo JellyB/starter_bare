@@ -8,6 +8,7 @@ import com.huatu.common.CommonErrors;
 import com.huatu.common.SuccessResponse;
 import com.huatu.common.spring.cache.Cached;
 import com.huatu.common.spring.cache.CachedInfoHolder;
+import com.huatu.common.utils.collection.HashMapBuilder;
 import com.huatu.common.utils.reflect.BeanUtil;
 import com.huatu.common.utils.web.RequestUtil;
 import com.huatu.springboot.cache.spel.SpelExecutor;
@@ -35,6 +36,9 @@ import static com.huatu.springboot.cache.conf.CacheManageConst.*;
  */
 @CacheManageEndPoint
 public class CacheManageServlet extends HttpServlet {
+
+    public static Map<Cached.DataScourseType,String> prefix = Maps.newHashMap();
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json;charset=UTF-8");
@@ -93,7 +97,11 @@ public class CacheManageServlet extends HttpServlet {
             write(resp,CommonErrors.FORBIDDEN);
         }
 
-        Object result = executeRequest(req, cachedInfo);
+        Object execute = executeRequest(req, cachedInfo);
+        Map result = HashMapBuilder.newBuilder()
+                .put("prefix",prefix.containsKey(cachedInfo.getSourceType()) ? prefix.get(cachedInfo.getSourceType()) : "")
+                .put("key",execute)
+                .build();
         write(resp,new SuccessResponse(result));
     }
 

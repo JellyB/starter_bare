@@ -1,11 +1,16 @@
 package com.huatu.springboot.cache.core;
 
+import com.huatu.common.spring.cache.Cached;
 import com.huatu.common.spring.cache.CachedInfosBuilder;
 import com.huatu.springboot.cache.spel.SpelExecutor;
 import com.huatu.springboot.cache.support.web.CacheManageBootEndpoint;
-import org.springframework.beans.factory.annotation.Value;
+import com.huatu.springboot.cache.support.web.CacheManageServlet;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,15 +19,34 @@ import org.springframework.context.annotation.Configuration;
  * @author hanchao
  * @date 2017/10/7 14:35
  */
+@Slf4j
 @Configuration
 @ConditionalOnProperty(name = "htonline.cache-manage.enabled",matchIfMissing = true)
+@EnableConfigurationProperties(CacheManageProperties.class)
 public class CacheManageAutoConfiguration {
-    @Value("${htonline.cache-manage.basePackage:}")
-    private String basePackage;
+
+    private CacheManageProperties properties;
+
+    public CacheManageAutoConfiguration(CacheManageProperties properties){
+        this.properties = properties;
+        if(MapUtils.isEmpty(properties.getPrefix())){
+            return;
+        }
+        for (String key : properties.getPrefix().keySet()) {
+            try {
+                String value = properties.getPrefix().get(key);
+                if(StringUtils.isNotBlank(value)){
+                    CacheManageServlet.prefix.put(Cached.DataScourseType.valueOf(key.toUpperCase()),value);
+                }
+            } catch(Exception e){
+                log.error("",e);
+            }
+        }
+    }
 
     @Bean
     public CachedInfosBuilder cachedInfosBuilder(){
-        return new CachedInfosBuilder(basePackage);
+        return new CachedInfosBuilder(properties.getBasePackage());
     }
 
     @Bean
