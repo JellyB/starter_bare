@@ -4,7 +4,7 @@ package com.huatu.springboot.cache.conf;
  * @author hanchao
  * @date 2017/10/7 19:44
  */
-public class CacheManageConst {
+public class CacheManageConsts {
     //servlet相关
     /**
      * 查看所有的缓存信息

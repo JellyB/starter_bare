@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.huatu.springboot.cache.conf.CacheManageConst.*;
+import static com.huatu.springboot.cache.conf.CacheManageConsts.*;
 
 /**
  * web缓存管理端点

@@ -2,7 +2,7 @@ package com.huatu.springboot.web.register.core;
 
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
 import com.google.common.primitives.Ints;
-import com.huatu.common.utils.web.IpUtil;
+import com.huatu.common.utils.env.IpAddrUtil;
 import com.huatu.springboot.web.register.WebRegister;
 import com.huatu.springboot.web.register.etcd.EtcdWebRegister;
 import com.huatu.springboot.web.register.listener.WebRegistListener;
@@ -53,7 +53,7 @@ public class RegisterAutoConfiguration {
             //自己指定的注册端口，例如docker映射
             port = registerConfig.getPort();
         }
-        String host = IpUtil.getLocalIP(registerConfig.getPreferedNetworks());
+        String host = IpAddrUtil.getLocalIP(registerConfig.getPreferedNetworks());
         if(StringUtils.isBlank(appName) || StringUtils.isBlank(host)){
             log.error("unknown host or appName,wont regist....");
             return null;
