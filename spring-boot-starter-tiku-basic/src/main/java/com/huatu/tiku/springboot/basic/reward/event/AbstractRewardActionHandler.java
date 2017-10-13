@@ -1,5 +1,7 @@
 package com.huatu.tiku.springboot.basic.reward.event;
 
+import com.huatu.common.utils.date.DateUtil;
+import com.huatu.tiku.common.bean.RewardMessage;
 import com.huatu.tiku.springboot.basic.reward.RewardAction;
 import com.huatu.tiku.springboot.basic.reward.RewardActionService;
 import lombok.extern.slf4j.Slf4j;
@@ -7,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * ONCE类型的任务直接在业务中拦截，此处不做处理
@@ -28,9 +33,18 @@ public abstract class AbstractRewardActionHandler implements RewardActionEventHa
         if(actionEvent.getAction() == null){
             log.error("action cant be null,{}...",actionEvent);
         }
+        if(filter(actionEvent)){
+            RewardMessage rewardMessage = RewardMessage.builder()
+                    .action(actionEvent.getAction().name())
+                    .bizId(actionEvent.getBizId())
+                    .gold(actionEvent.getGold())
+                    .experience(actionEvent.getExperience())
+                    .uid(actionEvent.getUid())
+                    .uname(actionEvent.getUname())
+                    .timestamp(actionEvent.getTimestamp())
+                    .build();
 
-
-
+        }
     }
 
     protected String getActionKey(RewardAction.ActionType action){
@@ -43,12 +57,15 @@ public abstract class AbstractRewardActionHandler implements RewardActionEventHa
             String cacheKey = String.format(REWARD_BIZ_KEY,getActionKey(rewardAction.getAction()),actionEvent.getUid());
             byte [] key = stringRedisSerializer.serialize(cacheKey);
             long mills = getExpireTime(rewardAction);
-            Long reqTime = getRedisTemplate().<Long>execute((RedisCallback) (conn)-> {
-                Long incr = conn.incr(key);
-                conn.expire(key,mills);
-                return incr;
-            });
-            //return analyzeTimes(reqTime);
+            //0不做限制
+            if(mills != 0){
+                Long reqTime = getRedisTemplate().<Long>execute((RedisCallback) (conn)-> {
+                    Long incr = conn.incr(key);
+                    conn.expire(key,mills);
+                    return incr;
+                });
+                return analyzeTimes(rewardAction,reqTime);
+            }
         }
         return true;
     }
@@ -56,7 +73,15 @@ public abstract class AbstractRewardActionHandler implements RewardActionEventHa
     public long getExpireTime(RewardAction rewardAction){
         switch (rewardAction.getStrategy()){
             case DAILY:
-
+                return DateUtil.getEndOfCurrentDay();
+            case WEEKELY:
+                return DateUtil.getEnd(Calendar.DAY_OF_WEEK,new Date()).getTimeInMillis();
+            case MONTHLY:
+                return DateUtil.getEnd(Calendar.DAY_OF_MONTH,new Date()).getTimeInMillis();
+            case YEARLY:
+                return DateUtil.getEnd(Calendar.YEAR,new Date()).getTimeInMillis();
+            default:
+                break;
         }
         return 0L;
     }
@@ -74,6 +99,10 @@ public abstract class AbstractRewardActionHandler implements RewardActionEventHa
         return true;
     }
 
+    public void dealMessage(RewardMessage rewardMessage){
+
+    }
+
 
     @Override
     public int getOrder() {
@@ -82,6 +111,5 @@ public abstract class AbstractRewardActionHandler implements RewardActionEventHa
 
     //所有应用要提供统一的redis数据源保证一致
     protected abstract RedisTemplate getRedisTemplate();
-
 
 }
