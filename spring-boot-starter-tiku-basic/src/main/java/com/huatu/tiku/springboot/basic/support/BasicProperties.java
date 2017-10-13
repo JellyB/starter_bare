@@ -11,4 +11,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 public class BasicProperties {
     private String subjects;
+    private String rewardActions;
 }

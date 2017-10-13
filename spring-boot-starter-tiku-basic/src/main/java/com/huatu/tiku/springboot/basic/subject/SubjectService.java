@@ -9,7 +9,6 @@ import com.huatu.common.utils.recursion.RecursionUtils;
 import com.huatu.tiku.springboot.basic.support.ConfigSubscriber;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -23,7 +22,6 @@ import java.util.Objects;
  * @author hanchao
  * @date 2017/10/6 10:35
  */
-@Service
 @Slf4j
 public class SubjectService implements ConfigSubscriber{
     private static List<Subject> subjectList = Lists.newArrayList();
