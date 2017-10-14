@@ -12,7 +12,7 @@ public interface RewardActionEventHandler extends Ordered {
      * 是否可以处理
      * @return
      */
-    boolean canHanle(RewardAction.ActionType actionType);
+    boolean canHandle(RewardAction.ActionType actionType);
 
     /**
      * 处理

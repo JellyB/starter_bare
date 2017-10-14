@@ -72,4 +72,8 @@ public class RewardActionService implements ConfigSubscriber {
         return actionMapping.get(aciton);
     }
 
+    public Map<String,RewardAction> all(){
+        return Maps.newHashMap(actionMapping);
+    }
+
 }

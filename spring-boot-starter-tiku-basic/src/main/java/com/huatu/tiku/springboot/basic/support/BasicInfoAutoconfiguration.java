@@ -38,6 +38,7 @@ public class BasicInfoAutoconfiguration {
         return new RewardActionService(basicProperties.getRewardActions());
     }
 
+
     @Bean
     public BasicConfigListener basicConfigListener(@Autowired SubjectService subjectService,
                                                    @Autowired RewardActionService rewardActionService){
@@ -52,7 +53,7 @@ public class BasicInfoAutoconfiguration {
     protected static class RewardAutoConfiguration{
         @Bean
         @ConditionalOnBean(RewardActionEventHandler.class)
-        public RewardActionEventListener rewardActionListener(){
+        public RewardActionEventListener rewardActionEventListener(){
             return new RewardActionEventListener();
         }
     }

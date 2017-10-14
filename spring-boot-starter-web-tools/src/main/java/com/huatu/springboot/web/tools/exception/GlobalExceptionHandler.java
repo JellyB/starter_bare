@@ -16,6 +16,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
@@ -74,7 +75,10 @@ public class GlobalExceptionHandler {
      * @param handlerMethod
      * @param exception
      */
-    @ExceptionHandler(value = {ServletException.class,BindException.class,ArgsValidException.class, ValidationException.class, javax.validation.ValidationException.class, MethodArgumentNotValidException.class,HttpMessageConversionException.class})
+    @ExceptionHandler(value = {ServletException.class,BindException.class,ArgsValidException.class,
+            ValidationException.class, javax.validation.ValidationException.class,
+            MethodArgumentNotValidException.class,HttpMessageConversionException.class,
+            MethodArgumentTypeMismatchException.class})
     public ModelAndView invalidArgumentsHandler(HttpServletRequest request, HandlerMethod handlerMethod, Exception exception) {
         if(log.isDebugEnabled()){
             log.debug("catch exception : ",exception);

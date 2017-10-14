@@ -30,7 +30,7 @@ public class RewardActionEventListener implements ApplicationContextAware,Initia
     @Override
     public void onApplicationEvent(RewardActionEvent event) {
         for (RewardActionEventHandler rewardActionEventHandler : rewardActionEventHandlers) {
-            if(rewardActionEventHandler.canHanle(event.getAction())){
+            if(rewardActionEventHandler.canHandle(event.getAction())){
                 rewardActionEventHandler.handle(event);
                 return;
             }
