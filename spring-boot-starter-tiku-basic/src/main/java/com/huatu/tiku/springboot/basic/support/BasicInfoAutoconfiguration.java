@@ -2,6 +2,7 @@ package com.huatu.tiku.springboot.basic.support;
 
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
 import com.google.common.collect.ImmutableMap;
+import com.huatu.tiku.springboot.basic.reward.RewardActionExecutor;
 import com.huatu.tiku.springboot.basic.reward.RewardActionService;
 import com.huatu.tiku.springboot.basic.reward.event.RewardActionEventHandler;
 import com.huatu.tiku.springboot.basic.reward.event.RewardActionEventListener;
@@ -55,6 +56,12 @@ public class BasicInfoAutoconfiguration {
         @ConditionalOnBean(RewardActionEventHandler.class)
         public RewardActionEventListener rewardActionEventListener(){
             return new RewardActionEventListener();
+        }
+
+
+        @Bean
+        public RewardActionExecutor rewardActionExecutor(){
+            return new RewardActionExecutor();
         }
     }
 }

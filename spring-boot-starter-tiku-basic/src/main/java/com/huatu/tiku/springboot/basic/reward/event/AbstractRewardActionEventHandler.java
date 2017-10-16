@@ -2,7 +2,8 @@ package com.huatu.tiku.springboot.basic.reward.event;
 
 import com.huatu.common.utils.code.UUIDTools;
 import com.huatu.common.utils.date.DateUtil;
-import com.huatu.tiku.common.bean.RewardMessage;
+import com.huatu.tiku.common.bean.reward.RewardMessage;
+import com.huatu.tiku.common.bean.reward.RewardResult;
 import com.huatu.tiku.springboot.basic.reward.RewardAction;
 import com.huatu.tiku.springboot.basic.reward.RewardActionService;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ public abstract class AbstractRewardActionEventHandler implements RewardActionEv
 
 
     @Override
-    public void handle(RewardActionEvent actionEvent) {
+    public RewardResult handle(RewardActionEvent actionEvent) {
         if(actionEvent.getAction() == null){
             log.error("action cant be null,{}...",actionEvent);
         }
@@ -46,7 +47,14 @@ public abstract class AbstractRewardActionEventHandler implements RewardActionEv
                     .timestamp(actionEvent.getTimestamp())
                     .build();
             dealMessage(rewardMessage);
+            RewardAction rewardAction = rewardActionService.get(actionEvent.getAction().name());
+            return RewardResult.builder()
+                    .completed(true)
+                    .experience(actionEvent.getExperience() == 0 ? rewardAction.getExperience() : actionEvent.getExperience())
+                    .gold(actionEvent.getGold() == 0 ? rewardAction.getGold() : rewardAction.getGold())
+                    .build();
         }
+        return null;
     }
 
     protected String getActionKey(RewardAction.ActionType action){
@@ -89,7 +97,7 @@ public abstract class AbstractRewardActionEventHandler implements RewardActionEv
     }
 
     /**
-     *
+     * 每日特训专用，可以在里面对5判断，然后返回true
      * @param rewardAction
      * @param time 次数
      * @return

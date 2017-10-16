@@ -1,5 +1,6 @@
 package com.huatu.tiku.springboot.basic.reward.event;
 
+import com.huatu.tiku.common.bean.reward.RewardResult;
 import com.huatu.tiku.springboot.basic.reward.RewardAction;
 import org.springframework.core.Ordered;
 
@@ -17,5 +18,5 @@ public interface RewardActionEventHandler extends Ordered {
     /**
      * 处理
      */
-    void handle(RewardActionEvent actionEvent);
+    RewardResult handle(RewardActionEvent actionEvent);
 }
