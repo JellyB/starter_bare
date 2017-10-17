@@ -8,6 +8,8 @@ import com.huatu.springboot.cache.support.web.CacheManageServlet;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.actuate.endpoint.AbstractEndpoint;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -56,6 +58,7 @@ public class CacheManageAutoConfiguration {
 
     @Configuration
     @ConditionalOnWebApplication
+    @ConditionalOnClass(AbstractEndpoint.class)
     protected static class WebEnvConfiguration {
         @Bean
         public CacheManageBootEndpoint cacheManageBootEndpoint(){
