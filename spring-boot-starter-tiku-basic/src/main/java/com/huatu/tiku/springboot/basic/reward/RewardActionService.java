@@ -16,6 +16,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.huatu.common.consts.ApolloConfigConsts.NAMESPACE_TIKU_BASIC;
+
 /**
  * 赏金任务配置
  * @author hanchao
@@ -43,10 +45,25 @@ public class RewardActionService implements ConfigSubscriber {
         Map<String, RewardAction> tempMapping = actionList.stream().collect(Collectors.toMap((action) -> action.getAction().name(), Function.identity()));
 
         //直接修改引用地址，避免线程安全问题
-        actionMapping = tempMapping;
-        configSign = DigestUtils.md5Hex(config);
+        synchronized (this){
+            actionMapping = tempMapping;
+            configSign = DigestUtils.md5Hex(config);
+        }
     }
 
+
+    /**
+     * 根据action查找对应的配置
+     * @param aciton
+     * @return
+     */
+    public RewardAction get(String aciton){
+        return actionMapping.get(aciton);
+    }
+
+    public Map<String,RewardAction> all(){
+        return Maps.newHashMap(actionMapping);
+    }
 
     @Override
     public void update(ConfigChange configChange) {
@@ -63,17 +80,13 @@ public class RewardActionService implements ConfigSubscriber {
         }
     }
 
-    /**
-     * 根据action查找对应的配置
-     * @param aciton
-     * @return
-     */
-    public RewardAction get(String aciton){
-        return actionMapping.get(aciton);
+    @Override
+    public String key() {
+        return "reward-actions";
     }
 
-    public Map<String,RewardAction> all(){
-        return Maps.newHashMap(actionMapping);
+    @Override
+    public String namespace() {
+        return NAMESPACE_TIKU_BASIC;
     }
-
 }

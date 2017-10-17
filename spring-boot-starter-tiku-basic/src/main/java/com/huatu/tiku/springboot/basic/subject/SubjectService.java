@@ -17,13 +17,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.huatu.common.consts.ApolloConfigConsts.NAMESPACE_TIKU_BASIC;
+
 /**
  * 支持在线更新的科目服务（不要修改已经定义过的id,可能引起数据问题）
  * @author hanchao
  * @date 2017/10/6 10:35
  */
 @Slf4j
-public class SubjectService implements ConfigSubscriber{
+public class SubjectService implements ConfigSubscriber {
     private static List<Subject> subjectList = Lists.newArrayList();
     //根级节点（业务上，根节点才是subject，上层可能是定义节点或考试类型,只是再表现形式上统一称为）
     private static Map<Integer,Subject> subjectMapping = Maps.newHashMap();
@@ -59,6 +61,16 @@ public class SubjectService implements ConfigSubscriber{
         }
     }
 
+    @Override
+    public String key() {
+        return "subjects";
+    }
+
+    @Override
+    public String namespace() {
+        return NAMESPACE_TIKU_BASIC;
+    }
+
 
     private void load(String config) throws IOException {
         log.debug(">>> load subjects from config...");
@@ -89,9 +101,11 @@ public class SubjectService implements ConfigSubscriber{
         //subjectMappingTemp = subjectListTemp.stream().collect(Collectors.toMap(Subject::getId, Function.identity()));
 
         //直接修改引用地址，避免线程安全问题
-        subjectList = subjectListTemp;
-        subjectMapping = subjectMappingTemp;
-        subjectConfigSign = DigestUtils.md5Hex(config);
+        synchronized (this){
+            subjectList = subjectListTemp;
+            subjectMapping = subjectMappingTemp;
+            subjectConfigSign = DigestUtils.md5Hex(config);
+        }
     }
 
 
