@@ -40,7 +40,7 @@ public class BasicInfoAutoconfiguration {
 
 
     @Bean
-    public ConfigListenerAdapter basicConfigListener(){
+    public ConfigListenerAdapter configListenerAdapter(){
         ConfigListenerAdapter configListenerAdapter = new ConfigListenerAdapter();
         return configListenerAdapter;
     }
