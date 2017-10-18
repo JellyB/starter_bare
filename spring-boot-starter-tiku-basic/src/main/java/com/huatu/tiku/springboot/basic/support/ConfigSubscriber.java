@@ -16,4 +16,12 @@ public interface ConfigSubscriber {
      * @return
      */
     String namespace();
+
+    /**
+     * 是否完成后通知，方便初始化
+     * @return
+     */
+    default boolean notifyOnReady(){
+        return false;
+    }
 }

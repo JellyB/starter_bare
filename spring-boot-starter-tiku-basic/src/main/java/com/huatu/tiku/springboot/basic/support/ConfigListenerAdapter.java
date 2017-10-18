@@ -2,6 +2,7 @@ package com.huatu.tiku.springboot.basic.support;
 
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigService;
+import com.ctrip.framework.apollo.model.ConfigChange;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
 import org.apache.commons.collections.CollectionUtils;
@@ -17,25 +18,10 @@ import java.util.Map;
  * @author hanchao
  * @date 2017/10/6 14:00
  */
-public class BasicConfigListener implements InitializingBean {
-    private Map<String,ConfigSubscriber> configSubscriberMap;
-
-//    public BasicConfigListener(Map<String,ConfigSubscriber> subscriberMap){
-//        this.configSubscriberMap = subscriberMap;
-//    }
-
+public class ConfigListenerAdapter implements InitializingBean {
 
     @Autowired
     private List<ConfigSubscriber> configSubscriberList;
-
-//    @ApolloConfigChangeListener("tiku.basic")
-//    private void listen(ConfigChangeEvent changeEvent){
-//        configSubscriberMap.forEach((k,v) -> {
-//            if(changeEvent.isChanged(k)){
-//                v.update(changeEvent.getChange(k));
-//            }
-//        });
-//    }
 
 
     @Override
@@ -61,6 +47,14 @@ public class BasicConfigListener implements InitializingBean {
                     }
                 }
             });
+            //notify after
+            Map<String, ConfigSubscriber> row = subscribers.row(namespace);
+            for (String key : row.keySet()) {
+                ConfigSubscriber configSubscriber = row.get(key);
+                if(configSubscriber.notifyOnReady()){
+                    configSubscriber.update(new ConfigChange(namespace,key,null,config.getProperty(configSubscriber.key(),null),null));
+                }
+            }
         }
     }
 
