@@ -1,8 +1,10 @@
 package com.huatu.springboot.web.tools;
 
 import com.huatu.common.spring.event.EventPublisher;
+import com.huatu.springboot.web.tools.advice.AdviceExcluder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -19,5 +21,11 @@ public class WebToolsConfiguration {
             return new EventPublisher(threadPoolTaskExecutor);
         }
         return new EventPublisher();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(AdviceExcluder.class)
+    public AdviceExcluder adviceExcluder(){
+        return new AdviceExcluder();
     }
 }
