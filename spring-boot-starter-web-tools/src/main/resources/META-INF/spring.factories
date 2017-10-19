@@ -2,4 +2,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.huatu.springboot.web.tools.exception.GlobalExceptionHandler,\
   com.huatu.springboot.web.tools.advice.WrapperResponseBodyAdvice,\
-  com.huatu.springboot.web.tools.WebToolsConfiguration
+  com.huatu.springboot.web.tools.WebToolsConfiguration,\
+  com.huatu.springboot.web.tools.advice.JsonpSupportAdvice

@@ -4,9 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -38,7 +37,8 @@ public class RewardActionEventListener implements InitializingBean,ApplicationLi
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        Collections.sort(rewardActionEventHandlers, Comparator.comparingInt(RewardActionEventHandler::getOrder));
+        AnnotationAwareOrderComparator.sort(rewardActionEventHandlers);
+        //Collections.sort(rewardActionEventHandlers, Comparator.comparingInt(RewardActionEventHandler::getOrder));
     }
 
 }

@@ -26,6 +26,7 @@ import org.apache.http.ssl.TrustStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -59,7 +60,7 @@ public class RestClientAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(OkHttpClient.class)
-        @ConditionalOnProperty(value = "htonline.okhttp.enabled",havingValue = "true",matchIfMissing = false)
+        @ConditionalOnProperty(value = "htonline.okhttp.enabled",havingValue = "true",matchIfMissing = true)
         public OkHttpClient okHttpClient(){
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
             return builder.connectTimeout(config.getConnectTimeout(), TimeUnit.MILLISECONDS)
@@ -74,6 +75,8 @@ public class RestClientAutoConfiguration {
 
     @Configuration
     @ConditionalOnClass(HttpClient.class)
+    @ConditionalOnMissingClass("okhttp3.OkHttpClient")
+    @ConditionalOnProperty(value = "htonline.httpclient.enabled",havingValue = "true",matchIfMissing = true)
     protected static class ApacheHttpclientConfiguration {
         @Autowired
         private RestClientConfig config;

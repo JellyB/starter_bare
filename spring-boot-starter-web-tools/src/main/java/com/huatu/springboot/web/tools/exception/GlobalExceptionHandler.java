@@ -27,11 +27,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 不应该作为cloud service的异常捕捉
  * 好处是这里不捕捉所有异常，子项目依然可以在throwable上层定义自己的处理逻辑
  * @author hanchao
  * @date 2017/8/31 20:52
  */
-@ConditionalOnProperty(value = "htonline.ex-handler.enabled",havingValue = "true",matchIfMissing = true)
+@ConditionalOnProperty(value = "htonline.ex-handler",havingValue = "gateway")
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
@@ -116,7 +117,7 @@ public class GlobalExceptionHandler {
         //不认识的错误，打印完整的异常信息
         log.error("catch exception : ",exception);
         ErrorResult errorResult = buildByResolvers(exception,CommonErrors.SERVICE_INTERNAL_ERROR);
-        return errorHandler.handle(request,handlerMethod,errorResult, HttpStatus.NOT_FOUND);
+        return errorHandler.handle(request,handlerMethod,errorResult, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 
