@@ -7,6 +7,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * 处理异常到响应
  * @author hanchao
  * @date 2017/4/9 18:41
  */

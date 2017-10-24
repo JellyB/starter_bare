@@ -35,13 +35,13 @@ public class WebToolsConfiguration {
     static class GlobalWebMvcConfig extends WebMvcConfigurerAdapter {
         @Override
         public void addViewControllers(ViewControllerRegistry registry) {
-            //common静态视图
-            registry.addViewController("/common/error/200").setViewName("/static/error/200.html");
-            registry.addViewController("/common/error/400").setViewName("/static/error/400.html");
-            registry.addViewController("/common/error/401").setViewName("/static/error/401.html");
-            registry.addViewController("/common/error/404").setViewName("/static/error/404.html");
-            registry.addViewController("/common/error/500").setViewName("/static/error/500.html");
             super.addViewControllers(registry);
         }
     }
+
+
+//    @Bean(name = "error")
+//    public View errorView(){
+//
+//    }
 }

@@ -6,10 +6,15 @@ import com.huatu.common.exception.ArgsValidException;
 import com.huatu.common.exception.BizException;
 import com.huatu.common.exception.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageConversionException;
-import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,22 +28,26 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.ValidationException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * spring boot默认异常处理是容器的errorpage,映射到error.path(basicerrorcontroller)，然后通过accept,status来读取不同的模板，没有模板读html文件,如果没有文件走默认的spelview /error,即Whitelabel
+ * 所以无需自定义errorpage，直接复用errorcontroller提供的策略即可
+ *
  * 不应该作为cloud service的异常捕捉
  * 好处是这里不捕捉所有异常，子项目依然可以在throwable上层定义自己的处理逻辑
  * @author hanchao
  * @date 2017/8/31 20:52
  */
-@ConditionalOnProperty(value = "htonline.ex-handler",havingValue = "gateway")
+@ConditionalOnProperty(value = "htonline.ex-handler.enabled",havingValue = "true",matchIfMissing = true)
 @ControllerAdvice
 @Slf4j
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler implements InitializingBean {
     //用于子项目扩展
-    private List<ExceptionResolver> exceptionResolvers = new ArrayList();
-    private ErrorResultHandler errorHandler = new SimpleErrorResultHandler();
+    @Autowired(required = false)
+    private List<ExceptionResolver> exceptionResolvers;
+    @Autowired
+    private ErrorResultHandler errorHandler;
 
     /**
      * 未授权异常
@@ -143,19 +152,46 @@ public class GlobalExceptionHandler {
         return errorResult;
     }
 
-    public List<ExceptionResolver> getExceptionResolvers() {
-        return exceptionResolvers;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        if(CollectionUtils.isNotEmpty(exceptionResolvers)){
+            AnnotationAwareOrderComparator.sort(exceptionResolvers);
+        }
     }
 
-    public ErrorResultHandler getErrorHandler() {
-        return errorHandler;
+
+
+
+
+    @Bean
+    @ConditionalOnMissingBean(ErrorResultHandler.class)
+    public ErrorResultHandler errorResultHandler(){
+        return new SimpleErrorResultHandler();
     }
 
-    public void setExceptionResolvers(List<ExceptionResolver> exceptionResolvers) {
-        this.exceptionResolvers = exceptionResolvers;
+    @Bean
+    public BizExceptionResolver bizExceptionResolver(){
+        return new BizExceptionResolver();
     }
 
-    public void setErrorHandler(ErrorResultHandler errorHandler) {
-        this.errorHandler = errorHandler;
+    static class BizExceptionResolver implements ExceptionResolver {
+
+        @Override
+        public ErrorResult resolve(Exception ex) {
+            if(ex instanceof BizException && ((BizException) ex).getCustomMessage() != null){
+                ErrorResult optional = ((BizException) ex).getErrorResult();
+                return ErrorResult.create(optional == null ? CommonErrors.SERVICE_INTERNAL_ERROR.getCode() : optional.getCode(),((BizException) ex).getCustomMessage());
+            }
+            return null;
+        }
+
+        @Override
+        public boolean canResolve(Exception ex) {
+            if(ex instanceof BizException && ((BizException) ex).getCustomMessage() != null){
+                return true;
+            }
+            return false;
+        }
     }
 }

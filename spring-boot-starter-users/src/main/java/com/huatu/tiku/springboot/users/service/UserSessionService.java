@@ -229,7 +229,7 @@ public class UserSessionService {
             final String tipMessage = String.format(TIP_MESSAGE, time);
             //设置过期一个月,让自动过期
             sessionRedisTemplate.expire(token,30, TimeUnit.DAYS);
-            throw new BizException(UserErrors.LOGIN_ON_OTHER_DEVICE,tipMessage);
+            throw new UnauthorizedException(UserErrors.LOGIN_ON_OTHER_DEVICE,tipMessage);
         }
 
         if (isExpire(token)) {//session过期

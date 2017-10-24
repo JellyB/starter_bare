@@ -31,7 +31,8 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+//TODO 可以直接使用controller,参考BasicErrorController
+//@RequestMapping("${server.error.path:${error.path:/error}}")
 //暂时从cloud复制过来使用，后续可能在boot包中直接使用
 public abstract class ServletWrappingEndpoint implements InitializingBean,
         ApplicationContextAware, ServletContextAware, MvcEndpoint {

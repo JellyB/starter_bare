@@ -3,16 +3,23 @@ package com.huatu.springboot.web.tools.exception;
 import com.alibaba.fastjson.JSON;
 import com.huatu.common.ErrorResult;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.ErrorAttributes;
+import org.springframework.boot.autoconfigure.web.ErrorProperties;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.springframework.web.servlet.view.xml.MappingJackson2XmlView;
+import org.springframework.web.util.WebUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -26,14 +33,21 @@ import java.util.Map;
 public class SimpleErrorResultHandler implements ErrorResultHandler {
     private static final MediaType DEFAULT_MEDIATYPE = MediaType.APPLICATION_JSON;
 
+    @Autowired
+    private ServerProperties serverProperties;
+
+    @Autowired
+    private ErrorAttributes errorAttributes;
 
     @Override
     public ModelAndView handle(HttpServletRequest request,HandlerMethod handlerMethod, Object errorResult, HttpStatus status) {
         MediaType type = getProduceType(request,handlerMethod);
-        ModelAndView modelAndView = produce(type,errorResult,status);
+        ModelAndView modelAndView = produce(request,type,errorResult,status);
         if(modelAndView.getStatus() == null){
             modelAndView.setStatus(status == null ? HttpStatus.OK : status);
         }
+        //适配spring boot error controller
+        request.setAttribute(WebUtils.ERROR_STATUS_CODE_ATTRIBUTE,(status == null ? HttpStatus.OK : status).value());
         return modelAndView;
     }
 
@@ -85,28 +99,32 @@ public class SimpleErrorResultHandler implements ErrorResultHandler {
     }
 
 
-    public ModelAndView produce(MediaType type,Object errorResult,HttpStatus status){
+    public ModelAndView produce(HttpServletRequest request,MediaType type,Object errorResult,HttpStatus status){
         if(type == MediaType.TEXT_HTML){
-            return produceHtml(errorResult,status);
+            return produceHtml(request,errorResult,status);
         }else if(type == MediaType.APPLICATION_JSON){
-            return produceJson(errorResult,status);
+            return produceJson(request,errorResult,status);
         }else if(type == MediaType.APPLICATION_XML){
-            return produceXml(errorResult,status);
+            return produceXml(request,errorResult,status);
         }
         throw new IllegalArgumentException("unknown media type to produce...");
     }
 
-    private ModelAndView produceJson(Object errorResult,HttpStatus status) {
+    protected ModelAndView produceJson(HttpServletRequest request,Object errorResult,HttpStatus status) {
         final MappingJackson2JsonView jackson2JsonView = new MappingJackson2JsonView();
         jackson2JsonView.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         ModelAndView modelAndView = new ModelAndView(jackson2JsonView);
         /*BeanMap map = new BeanMap(errorResult);
         modelAndView.addAllObjects(map);*/
         modelAndView.addAllObjects((Map<String, Object>) JSON.toJSON(errorResult));
+        if(isIncludeStackTrace(request,MediaType.APPLICATION_JSON_UTF8)){
+            Throwable error = errorAttributes.getError(new ServletRequestAttributes(request));
+            modelAndView.addObject("trace", ExceptionUtils.getStackTrace(error));
+        }
         return modelAndView;
     }
 
-    private ModelAndView produceXml(Object errorResult,HttpStatus status) {
+    protected ModelAndView produceXml(HttpServletRequest request,Object errorResult,HttpStatus status) {
         final MappingJackson2XmlView jackson2XmlView = new MappingJackson2XmlView();
         jackson2XmlView.setContentType(MediaType.APPLICATION_XML_VALUE+";charset=UTF-8");
         ModelAndView modelAndView = new ModelAndView(jackson2XmlView);
@@ -114,13 +132,31 @@ public class SimpleErrorResultHandler implements ErrorResultHandler {
         return modelAndView;
     }
 
-    private ModelAndView produceHtml(Object errorResult,HttpStatus status) {
+    protected ModelAndView produceHtml(HttpServletRequest request,Object errorResult,HttpStatus status) {
         //应该对于状态码返回不同的页面,临时写死
 
         if(errorResult instanceof ErrorResult){
-            return new ModelAndView("/common/error/"+status.value()+"?code="+((ErrorResult) errorResult).getCode()+"&message="+((ErrorResult) errorResult).getMessage(), status);
+            return new ModelAndView(serverProperties.getError().getPath()+"?code="+((ErrorResult) errorResult).getCode()+"&message="+((ErrorResult) errorResult).getMessage(), status);
         }
-        return new ModelAndView("/common/error/"+status.value());
+        return new ModelAndView(serverProperties.getError().getPath());
     }
+
+
+    protected boolean isIncludeStackTrace(HttpServletRequest request,
+                                          MediaType produces) {
+        ErrorProperties.IncludeStacktrace include = serverProperties.getError().getIncludeStacktrace();
+        if (include == ErrorProperties.IncludeStacktrace.ALWAYS) {
+            return true;
+        }
+        if (include == ErrorProperties.IncludeStacktrace.ON_TRACE_PARAM) {
+            String parameter = request.getParameter("trace");
+            if (parameter == null) {
+                return false;
+            }
+            return !"false".equals(parameter.toLowerCase());
+        }
+        return false;
+    }
+
 
 }
