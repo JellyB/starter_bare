@@ -133,7 +133,6 @@ public class SimpleErrorResultHandler implements ErrorResultHandler {
     }
 
     protected ModelAndView produceHtml(HttpServletRequest request,Object errorResult,HttpStatus status) {
-        //应该对于状态码返回不同的页面,临时写死
 
         if(errorResult instanceof ErrorResult){
             return new ModelAndView(serverProperties.getError().getPath()+"?code="+((ErrorResult) errorResult).getCode()+"&message="+((ErrorResult) errorResult).getMessage(), status);
