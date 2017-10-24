@@ -9,25 +9,13 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
     <link rel="stylesheet" href="//cdn.bootcss.com/weui/1.1.2/style/weui.min.css"/>
 </head>
-<script>
-    function getParameter(name) {
-        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
-        var r = window.location.search.substr(1).match(reg);
-        if(r!=null)
-            return  decodeURI(r[2]);
-        return null;
-    }
-    window.onload = function(){
-        document.getElementById("code").innerText = getParameter("code");
-        document.getElementById("message").innerText = getParameter("message");
-    }
-</script>
 <body>
 <div class="weui-msg">
     <div class="weui-msg__icon-area"><i class="weui-icon-warn weui-icon_msg-primary"></i></div>
     <div class="weui-msg__text-area">
-        <h2 class="weui-msg__title" id="code"></h2>
-        <p class="weui-msg__desc" id="message"></p>
+        <h2 class="weui-msg__title" >${code}</h2>
+        <p class="weui-msg__desc" >${message}</p>
+        <p class="weui-msg__desc" >${trace}</p>
     </div>
 </div>
 </body>

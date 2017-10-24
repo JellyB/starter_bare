@@ -24,7 +24,12 @@ public interface ExceptionResolver {
      */
     boolean canResolve(Exception ex);
 
+    /**
+     * 方便在spring cloud的异常追踪中，可以追踪特别status
+     * @param ex
+     * @return
+     */
     default HttpStatus status(Exception ex){
-        return HttpStatus.INTERNAL_SERVER_ERROR;
+        return null;
     }
 }

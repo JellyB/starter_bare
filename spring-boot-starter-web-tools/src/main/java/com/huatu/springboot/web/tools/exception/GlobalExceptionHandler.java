@@ -49,6 +49,8 @@ public class GlobalExceptionHandler implements InitializingBean {
     @Autowired
     private ErrorResultHandler errorHandler;
 
+    private boolean needResolve = false;
+
     /**
      * 未授权异常
      * @param request
@@ -60,8 +62,7 @@ public class GlobalExceptionHandler implements InitializingBean {
         if(log.isDebugEnabled()){
             log.debug("catch exception : ",exception);
         }
-        ErrorResult errorResult = buildByResolvers(exception, ((UnauthorizedException)exception).getErrorResult());
-        return errorHandler.handle(request,handlerMethod,errorResult, HttpStatus.UNAUTHORIZED);
+        return resolveAndHandle(request,handlerMethod,exception,((UnauthorizedException)exception).getErrorResult(),HttpStatus.UNAUTHORIZED);
     }
 
     /**
@@ -75,8 +76,7 @@ public class GlobalExceptionHandler implements InitializingBean {
         if(log.isDebugEnabled()){
             log.debug("catch exception : ",exception);
         }
-        ErrorResult errorResult = buildByResolvers(exception, ((BizException)exception).getErrorResult());
-        return errorHandler.handle(request,handlerMethod,errorResult, null);
+        return resolveAndHandle(request,handlerMethod,exception,((BizException)exception).getErrorResult(),null);
     }
 
     /**
@@ -93,8 +93,7 @@ public class GlobalExceptionHandler implements InitializingBean {
         if(log.isDebugEnabled()){
             log.debug("catch exception : ",exception);
         }
-        ErrorResult errorResult = buildByResolvers(exception, CommonErrors.INVALID_ARGUMENTS);
-        return errorHandler.handle(request,handlerMethod,errorResult, HttpStatus.BAD_REQUEST);
+        return resolveAndHandle(request,handlerMethod,exception,CommonErrors.INVALID_ARGUMENTS,HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -109,8 +108,7 @@ public class GlobalExceptionHandler implements InitializingBean {
         if(log.isDebugEnabled()){
             log.debug("catch exception : ",exception);
         }
-        ErrorResult errorResult = buildByResolvers(exception, CommonErrors.RESOURCE_NOT_FOUND);
-        return errorHandler.handle(request,null,errorResult, HttpStatus.NOT_FOUND);
+        return resolveAndHandle(request,null,exception,CommonErrors.RESOURCE_NOT_FOUND,HttpStatus.NOT_FOUND);
     }
 
 
@@ -125,31 +123,28 @@ public class GlobalExceptionHandler implements InitializingBean {
     public ModelAndView globalErrorHandler(HttpServletRequest request, HandlerMethod handlerMethod, Exception exception){
         //不认识的错误，打印完整的异常信息
         log.error("catch exception : ",exception);
-        ErrorResult errorResult = buildByResolvers(exception,CommonErrors.SERVICE_INTERNAL_ERROR);
-        return errorHandler.handle(request,handlerMethod,errorResult, HttpStatus.INTERNAL_SERVER_ERROR);
+        return resolveAndHandle(request,handlerMethod,exception,CommonErrors.SERVICE_INTERNAL_ERROR,HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-
-
-    /**
-     * 获取处理结果
-     * @param ex
-     * @return
-     */
-    private ErrorResult buildByResolvers(Exception ex,ErrorResult optional){
+    public ModelAndView resolveAndHandle(HttpServletRequest request, HandlerMethod handlerMethod,Exception ex,ErrorResult optionalError,HttpStatus optionalStatus){
         ErrorResult errorResult = null;
-        if(!CollectionUtils.isEmpty(exceptionResolvers)){
+        HttpStatus httpStatus = null;
+        if(needResolve){
             for (ExceptionResolver resolver : exceptionResolvers) {
                 if(resolver.canResolve(ex)){
                     errorResult = resolver.resolve(ex);
+                    httpStatus = resolver.status(ex);
                     break;
                 }
             }
         }
         if(errorResult == null){
-            errorResult = optional;
+            errorResult = optionalError;
         }
-        return errorResult;
+        if(httpStatus == null){
+            httpStatus = optionalStatus;
+        }
+        return errorHandler.handle(request,handlerMethod,errorResult,httpStatus);
     }
 
 
@@ -157,6 +152,7 @@ public class GlobalExceptionHandler implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         if(CollectionUtils.isNotEmpty(exceptionResolvers)){
             AnnotationAwareOrderComparator.sort(exceptionResolvers);
+            needResolve = true;
         }
     }
 
