@@ -1,0 +1,34 @@
+<!DOCTYPE>
+<html>
+<head >
+    <title>提示</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <link rel="stylesheet" href="//cdn.bootcss.com/weui/1.1.2/style/weui.min.css"/>
+</head>
+<script>
+    function getParameter(name) {
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if(r!=null)
+            return  decodeURI(r[2]);
+        return null;
+    }
+    window.onload = function(){
+        document.getElementById("code").innerText = getParameter("code");
+        document.getElementById("message").innerText = getParameter("message");
+    }
+</script>
+<body>
+<div class="weui-msg">
+    <div class="weui-msg__icon-area"><i class="weui-icon-warn weui-icon_msg-primary"></i></div>
+    <div class="weui-msg__text-area">
+        <h2 class="weui-msg__title" id="code"></h2>
+        <p class="weui-msg__desc" id="message"></p>
+    </div>
+</div>
+</body>
+</html>

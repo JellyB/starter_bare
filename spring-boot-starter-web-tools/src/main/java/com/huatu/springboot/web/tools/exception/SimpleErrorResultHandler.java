@@ -118,9 +118,9 @@ public class SimpleErrorResultHandler implements ErrorResultHandler {
         //应该对于状态码返回不同的页面,临时写死
 
         if(errorResult instanceof ErrorResult){
-            return new ModelAndView("redirect:http://ns.huatu.com/pc/error/5xx?code="+((ErrorResult) errorResult).getCode()+"&message="+((ErrorResult) errorResult).getMessage(), HttpStatus.FOUND);
+            return new ModelAndView("/common/error/"+status.value()+"?code="+((ErrorResult) errorResult).getCode()+"&message="+((ErrorResult) errorResult).getMessage(), status);
         }
-        return new ModelAndView("redirect:http://ns.huatu.com/pc/error/5xx",HttpStatus.FOUND);
+        return new ModelAndView("/common/error/"+status.value());
     }
 
 }
