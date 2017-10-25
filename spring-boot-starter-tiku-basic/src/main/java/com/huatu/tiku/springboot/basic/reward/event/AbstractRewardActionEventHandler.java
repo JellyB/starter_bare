@@ -24,7 +24,7 @@ import java.util.Date;
 @Slf4j
 public abstract class AbstractRewardActionEventHandler implements RewardActionEventHandler {
     //直接强制使用该key，屏蔽各应用的序列化前缀,防止跨应用任务的情况
-    public static final String REWARD_BIZ_KEY = "AbstractRewardActionEventHandler.action$%s$%s";
+    public static final String REWARD_BIZ_KEY = "AbstractRewardActionEventHandler.actionHit$%s$%s";
     @Autowired
     private RewardActionService rewardActionService;
 
@@ -71,7 +71,7 @@ public abstract class AbstractRewardActionEventHandler implements RewardActionEv
             if(expireTime != 0){
                 Long reqTime = (Long)(getRedisTemplate().execute((RedisCallback<Long>) (conn)-> {
                     Long incr = conn.incr(key);
-                    conn.pExpireAt(key,expireTime);
+                    conn.expireAt(key,expireTime/1000);//pexpireAt有Bug，最终调用了pexpire
                     return incr;
                 }));
                 return analyzeTimes(rewardAction,reqTime);
