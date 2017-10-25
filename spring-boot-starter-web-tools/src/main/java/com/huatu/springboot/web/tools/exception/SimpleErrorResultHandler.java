@@ -1,7 +1,6 @@
 package com.huatu.springboot.web.tools.exception;
 
 import com.alibaba.fastjson.JSON;
-import com.huatu.common.ErrorResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +31,7 @@ import java.util.Map;
 @Slf4j
 public class SimpleErrorResultHandler implements ErrorResultHandler {
     private static final MediaType DEFAULT_MEDIATYPE = MediaType.APPLICATION_JSON;
+    private static final String TRACE_PROPERTY_NAME = "trace";
 
     @Autowired
     private ServerProperties serverProperties;
@@ -113,33 +113,33 @@ public class SimpleErrorResultHandler implements ErrorResultHandler {
     protected ModelAndView produceJson(HttpServletRequest request,Object errorResult,HttpStatus status) {
         final MappingJackson2JsonView jackson2JsonView = new MappingJackson2JsonView();
         jackson2JsonView.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        ModelAndView modelAndView = new ModelAndView(jackson2JsonView);
-        /*BeanMap map = new BeanMap(errorResult);
-        modelAndView.addAllObjects(map);*/
-        modelAndView.addAllObjects((Map<String, Object>) JSON.toJSON(errorResult));
-        if(isIncludeStackTrace(request,MediaType.APPLICATION_JSON_UTF8)){
-            Throwable error = errorAttributes.getError(new ServletRequestAttributes(request));
-            modelAndView.addObject("trace", ExceptionUtils.getStackTrace(error));
-        }
+        ModelAndView modelAndView = new ModelAndView(jackson2JsonView,getModel(request,errorResult));
         return modelAndView;
     }
 
     protected ModelAndView produceXml(HttpServletRequest request,Object errorResult,HttpStatus status) {
         final MappingJackson2XmlView jackson2XmlView = new MappingJackson2XmlView();
         jackson2XmlView.setContentType(MediaType.APPLICATION_XML_VALUE+";charset=UTF-8");
-        ModelAndView modelAndView = new ModelAndView(jackson2XmlView);
-        modelAndView.addAllObjects((Map<String, Object>) JSON.toJSON(errorResult));
+        ModelAndView modelAndView = new ModelAndView(jackson2XmlView,getModel(request,errorResult));
         return modelAndView;
     }
 
     protected ModelAndView produceHtml(HttpServletRequest request,Object errorResult,HttpStatus status) {
-
-        if(errorResult instanceof ErrorResult){
-            return new ModelAndView(serverProperties.getError().getPath()+"?code="+((ErrorResult) errorResult).getCode()+"&message="+((ErrorResult) errorResult).getMessage(), status);
+        Map model = getModel(request, errorResult);
+        if(model.get(TRACE_PROPERTY_NAME) != null && model.get(TRACE_PROPERTY_NAME) instanceof String){
+            model.put(TRACE_PROPERTY_NAME,((String) model.get(TRACE_PROPERTY_NAME)).replace("\r\n","<br/>"));
         }
-        return new ModelAndView(serverProperties.getError().getPath());
+        return new ModelAndView("error",model);
     }
 
+    protected Map getModel(HttpServletRequest request,Object errorResult){
+        Map model = (Map) JSON.toJSON(errorResult);
+        if(isIncludeStackTrace(request,MediaType.APPLICATION_JSON_UTF8)){
+            Throwable error = errorAttributes.getError(new ServletRequestAttributes(request));
+            model.put(TRACE_PROPERTY_NAME, ExceptionUtils.getStackTrace(error));
+        }
+        return model;
+    }
 
     protected boolean isIncludeStackTrace(HttpServletRequest request,
                                           MediaType produces) {
