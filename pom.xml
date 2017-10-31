@@ -25,6 +25,7 @@
         <module>spring-boot-starter-tiku-basic</module>
         <module>spring-boot-starter-cache-manage</module>
         <module>spring-boot-starter-degrade</module>
+        <module>spring-boot-starter-redis-queue</module>
     </modules>
 
 </project>
