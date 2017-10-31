@@ -1,6 +1,11 @@
 package com.huatu.tiku.springboot.redis.queue;
 
+import com.huatu.tiku.springboot.redis.queue.core.QueueListenerContainer;
+import com.huatu.tiku.springboot.redis.queue.core.RedisQueueTempalte;
+import com.huatu.tiku.springboot.redis.queue.core.SimpleRedisQueueListenerContainer;
 import com.huatu.tiku.springboot.redis.queue.support.QueueRedisProperties;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,10 +29,24 @@ public class RedisQueueAutoConfiguration {
 
 
     @Bean
-    public JedisPool jediSentinelPool(){
+    public JedisPool queueJedisPool(){
         JedisPoolConfig poolConfig = this.properties.getPool() != null ? jedisPoolConfig() : new JedisPoolConfig();
-        JedisPool jedisPool = new JedisPool(poolConfig,this.properties.getHost(),this.properties.getPort(),this.properties.getTimeout(),this.properties.getPassword());
+        JedisPool jedisPool = new JedisPool(poolConfig,this.properties.getHost(),this.properties.getPort(),
+                this.properties.getTimeout(),
+                this.properties.getPassword(),
+                this.properties.getDatabase());
         return jedisPool;
+    }
+
+
+    @Bean
+    public RedisQueueTempalte redisQueueTempalte(@Autowired @Qualifier("queueJedisPool") JedisPool jedisPool){
+        return new RedisQueueTempalte(jedisPool);
+    }
+
+    @Bean
+    public QueueListenerContainer queueListenerContainer(@Autowired @Qualifier("queueJedisPool") JedisPool jedisPool){
+        return new SimpleRedisQueueListenerContainer(jedisPool);
     }
 
     private JedisPoolConfig jedisPoolConfig() {
@@ -40,4 +59,5 @@ public class RedisQueueAutoConfiguration {
         config.setTestOnBorrow(props.isTestOnBorrow());
         return config;
     }
+
 }

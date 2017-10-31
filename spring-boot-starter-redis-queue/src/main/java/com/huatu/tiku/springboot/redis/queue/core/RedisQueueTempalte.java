@@ -2,7 +2,7 @@ package com.huatu.tiku.springboot.redis.queue.core;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
-import com.huatu.tiku.springboot.redis.queue.support.JedisTemplate;
+import com.huatu.tiku.springboot.redis.queue.support.QueueJedisTemplate;
 import redis.clients.jedis.JedisPool;
 
 /**
@@ -11,11 +11,11 @@ import redis.clients.jedis.JedisPool;
  */
 public class RedisQueueTempalte {
     private JedisPool jedisPool;
-    private JedisTemplate jedisTemplate;
+    private QueueJedisTemplate jedisTemplate;
 
     public RedisQueueTempalte(JedisPool jedisPool){
         this.jedisPool = jedisPool;
-        this.jedisTemplate = new JedisTemplate(jedisPool);
+        this.jedisTemplate = new QueueJedisTemplate(jedisPool);
     }
 
     public void convertAndSend(String queue,Object... objects){

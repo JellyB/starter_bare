@@ -18,7 +18,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  * @date 2017/9/12 20:46
  */
 @ConditionalOnClass(ThreadPoolTaskExecutor.class)
-@ConditionalOnProperty(value = "htonline.executor.enabled", havingValue = "true", matchIfMissing = false) //必填
+@ConditionalOnProperty(value = "htonline.executor.enabled", havingValue = "true")
 @Configuration
 @EnableApolloConfig("htonline.executor")
 @EnableConfigurationProperties(ExecutorProperties.class)

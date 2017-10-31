@@ -13,7 +13,7 @@ public abstract class AbstractRedisQueueListener<T> implements RedisQueueListene
         consumeContent(t);
     }
 
-    abstract void consumeContent(T t);
+    public abstract void consumeContent(T t);
 
-    abstract Class<T> contentType();
+    public abstract Class<T> contentType();
 }

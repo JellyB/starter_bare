@@ -90,4 +90,9 @@ public class SessionRedisTemplate {
         }
         return execute(jedis -> jedis.expire(key,expire));
     }
+
+
+    public interface JedisCallback<T> {
+        T doInJedis(Jedis jedis);
+    }
 }
