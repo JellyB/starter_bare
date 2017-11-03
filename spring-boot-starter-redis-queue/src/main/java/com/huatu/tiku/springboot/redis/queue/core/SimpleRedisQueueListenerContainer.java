@@ -1,5 +1,6 @@
 package com.huatu.tiku.springboot.redis.queue.core;
 
+import com.huatu.tiku.springboot.redis.queue.support.RejectException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeansException;
@@ -120,7 +121,13 @@ public class SimpleRedisQueueListenerContainer implements QueueListenerContainer
             if (message == null) {
                 TimeUnit.SECONDS.sleep(1);
             } else {
-                listener.consume(message);
+                try {
+                    listener.consume(message);
+                } catch (RejectException e){
+                    //do nothing
+                } catch(Exception e){
+                    //should drop the message,or put it to another queue
+                }
             }
         }
 

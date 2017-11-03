@@ -28,13 +28,13 @@ public class RedisQueueAutoConfiguration {
     }
 
 
-    @Bean
-    public JedisPool queueJedisPool(){
-        JedisPoolConfig poolConfig = this.properties.getPool() != null ? jedisPoolConfig() : new JedisPoolConfig();
-        JedisPool jedisPool = new JedisPool(poolConfig,this.properties.getHost(),this.properties.getPort(),
-                this.properties.getTimeout(),
-                this.properties.getPassword(),
-                this.properties.getDatabase());
+        @Bean
+        public JedisPool queueJedisPool(){
+            JedisPoolConfig poolConfig = this.properties.getPool() != null ? jedisPoolConfig() : new JedisPoolConfig();
+            JedisPool jedisPool = new JedisPool(poolConfig,this.properties.getHost(),this.properties.getPort(),
+                    this.properties.getTimeout(),
+                    this.properties.getPassword(),
+                    this.properties.getDatabase());
         return jedisPool;
     }
 

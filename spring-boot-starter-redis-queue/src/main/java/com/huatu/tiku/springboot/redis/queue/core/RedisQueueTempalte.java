@@ -5,6 +5,8 @@ import com.google.common.collect.Lists;
 import com.huatu.tiku.springboot.redis.queue.support.QueueJedisTemplate;
 import redis.clients.jedis.JedisPool;
 
+import java.util.function.Function;
+
 /**
  * @author hanchao
  * @date 2017/10/31 16:46
@@ -19,7 +21,11 @@ public class RedisQueueTempalte {
     }
 
     public void convertAndSend(String queue,Object... objects){
-        String[] messages = Lists.newArrayList(objects).stream().map(o -> JSON.toJSONString(o)).toArray(String[]::new);
+        convertAndSend(queue,o -> JSON.toJSONString(o),objects);
+    }
+
+    public void convertAndSend(String queue, Function<? super Object,String> mapper, Object ...objects){
+        String[] messages = Lists.newArrayList(objects).stream().map(mapper).toArray(String[]::new);
         this.jedisTemplate.lpush(queue,messages);
     }
 }
