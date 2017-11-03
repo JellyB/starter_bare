@@ -177,7 +177,7 @@ public class GlobalExceptionHandler implements InitializingBean {
         public ErrorResult resolve(Exception ex) {
             if(ex instanceof BizException && ((BizException) ex).getCustomMessage() != null){
                 ErrorResult optional = ((BizException) ex).getErrorResult();
-                return ErrorResult.create(optional == null ? CommonErrors.SERVICE_INTERNAL_ERROR.getCode() : optional.getCode(),((BizException) ex).getCustomMessage());
+                return optional == null ? CommonErrors.SERVICE_INTERNAL_ERROR : ErrorResult.create(optional.getCode(),((BizException) ex).getCustomMessage());
             }
             return null;
         }
