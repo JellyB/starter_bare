@@ -1,1 +1,1 @@
-provides: spring-boot-starter-users,spring-boot-starter-redis-queue
+provides: spring-boot-starter-redis-queue
