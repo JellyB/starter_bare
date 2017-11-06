@@ -24,6 +24,7 @@ public class AdviceExcluder {
         ignoreUrls.add("/**/_monitor/**");//_monitor不能定于在mapping中
         ignoreClasses.add("org.springframework.hateoas.ResourceSupport");
         ignoreClasses.add("org.springframework.http.ResponseEntity");
+        ignoreClasses.add("byte[]");
     }
 
     public AdviceExcluder(Set<String> ignoreClasses,List<String> ignoreUrls){
