@@ -35,4 +35,13 @@ public enum SubjectEnum {
     public int categoryid() {
         return categoryid;
     }
+
+    public static SubjectEnum valueOf(int code){
+        for (SubjectEnum subjectEnum : SubjectEnum.values()) {
+            if(subjectEnum.code() == code){
+                return subjectEnum;
+            }
+        }
+        return SubjectEnum.GONGWUYUAN;
+    }
 }
