@@ -1,6 +1,7 @@
 package com.huatu.springboot.restclient;
 
 import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
+import com.google.common.collect.Lists;
 import com.huatu.springboot.restclient.support.RestClientConfig;
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
@@ -24,13 +25,16 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.ssl.TrustStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
@@ -70,6 +74,7 @@ public class RestClientAutoConfiguration {
                     .followRedirects(config.isRedirectable())//不跟踪重定向
                     .build();
         }
+
     }
 
 
@@ -151,5 +156,34 @@ public class RestClientAutoConfiguration {
             return httpClient;
         }
     }
+
+
+    @Configuration
+    @ConditionalOnClass(RestTemplate.class)
+    protected static class RestTemplateConfiguration {
+        @Bean
+        @ConditionalOnBean(OkHttpClient.class)
+        public ClientHttpRequestFactory okHttp3ClientHttpRequestFactory(@Autowired OkHttpClient okHttpClient){
+            return new OkHttp3ClientHttpRequestFactory(okHttpClient);
+        }
+
+
+        @Bean
+        @ConditionalOnBean(OkHttpClient.class)
+        public ClientHttpRequestFactory httpClientHttpRequestFactory(@Autowired HttpClient httpClient){
+            return new HttpComponentsClientHttpRequestFactory(httpClient);
+        }
+
+        @Bean
+        public RestTemplate restTemplate(@Autowired ClientHttpRequestFactory clientHttpRequestFactory){
+            RestTemplate template = new RestTemplate(clientHttpRequestFactory);
+            MappingJackson2HttpMessageConverter compatibleWechat = new MappingJackson2HttpMessageConverter();
+            compatibleWechat.setSupportedMediaTypes(Lists.newArrayList(MediaType.TEXT_PLAIN));
+            template.getMessageConverters().add(compatibleWechat);
+            return template;
+        }
+    }
+
+
 
 }
