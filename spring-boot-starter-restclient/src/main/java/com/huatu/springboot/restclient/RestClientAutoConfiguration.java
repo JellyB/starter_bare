@@ -24,7 +24,10 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.ssl.TrustStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.*;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -60,6 +63,7 @@ public class RestClientAutoConfiguration {
         private RestClientConfig config;
 
         @Bean
+        @ConditionalOnClass(OkHttpClient.class)
         @ConditionalOnMissingBean(OkHttpClient.class)
         @ConditionalOnProperty(value = "htonline.okhttp.enabled",havingValue = "true",matchIfMissing = true)
         public OkHttpClient okHttpClient(){
@@ -70,6 +74,11 @@ public class RestClientAutoConfiguration {
                     .connectionPool(new ConnectionPool(config.getMaxTotal(),config.getKeepAliveTime(), TimeUnit.MILLISECONDS))
                     .followRedirects(config.isRedirectable())//不跟踪重定向
                     .build();
+        }
+
+        @Bean
+        public ClientHttpRequestFactory okHttp3ClientHttpRequestFactory(@Autowired OkHttpClient okHttpClient){
+            return new OkHttp3ClientHttpRequestFactory(okHttpClient);
         }
 
     }
@@ -152,28 +161,21 @@ public class RestClientAutoConfiguration {
             HttpClient httpClient = HttpClients.custom().setDefaultRequestConfig(requestConfig).setConnectionManager(cm).setRetryHandler(httpRequestRetryHandler).build();
             return httpClient;
         }
+
+        @Bean
+        public ClientHttpRequestFactory httpClientHttpRequestFactory(@Autowired HttpClient httpClient){
+            return new HttpComponentsClientHttpRequestFactory(httpClient);
+        }
     }
 
 
     @Configuration
     @ConditionalOnClass(RestTemplate.class)
     protected static class RestTemplateConfiguration {
-        @Bean
-        @ConditionalOnBean(OkHttpClient.class)
-        public ClientHttpRequestFactory okHttp3ClientHttpRequestFactory(@Autowired OkHttpClient okHttpClient){
-            return new OkHttp3ClientHttpRequestFactory(okHttpClient);
-        }
-
 
         @Bean
-        @ConditionalOnBean(OkHttpClient.class)
-        public ClientHttpRequestFactory httpClientHttpRequestFactory(@Autowired HttpClient httpClient){
-            return new HttpComponentsClientHttpRequestFactory(httpClient);
-        }
-
-        @Bean
-        public RestTemplate restTemplate(@Autowired ClientHttpRequestFactory clientHttpRequestFactory){
-            RestTemplate template = new RestTemplate(clientHttpRequestFactory);
+        public RestTemplate restTemplate(@Autowired(required = false) ClientHttpRequestFactory clientHttpRequestFactory){
+            RestTemplate template = clientHttpRequestFactory == null ? new RestTemplate() : new RestTemplate(clientHttpRequestFactory);
             return template;
         }
     }

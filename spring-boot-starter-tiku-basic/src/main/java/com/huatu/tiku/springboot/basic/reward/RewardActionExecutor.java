@@ -4,6 +4,7 @@ import com.huatu.tiku.common.bean.reward.RewardResult;
 import com.huatu.tiku.springboot.basic.reward.event.RewardActionEvent;
 import com.huatu.tiku.springboot.basic.reward.event.RewardActionEventHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -17,7 +18,7 @@ import java.util.List;
  */
 @Slf4j
 public class RewardActionExecutor implements InitializingBean {
-    @Autowired
+    @Autowired(required = false)
     private List<RewardActionEventHandler> rewardActionEventHandlers;
 
 
@@ -33,6 +34,8 @@ public class RewardActionExecutor implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        AnnotationAwareOrderComparator.sort(rewardActionEventHandlers);
+        if(CollectionUtils.isNotEmpty(rewardActionEventHandlers)){
+            AnnotationAwareOrderComparator.sort(rewardActionEventHandlers);
+        }
     }
 }

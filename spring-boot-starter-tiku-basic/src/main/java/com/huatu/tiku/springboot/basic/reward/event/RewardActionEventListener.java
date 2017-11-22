@@ -1,6 +1,7 @@
 package com.huatu.tiku.springboot.basic.reward.event;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -14,7 +15,7 @@ import java.util.List;
  */
 @Slf4j
 public class RewardActionEventListener implements InitializingBean,ApplicationListener<RewardActionEvent> {
-    @Autowired
+    @Autowired(required = false)
     private List<RewardActionEventHandler> rewardActionEventHandlers;
 
 
@@ -37,7 +38,9 @@ public class RewardActionEventListener implements InitializingBean,ApplicationLi
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        AnnotationAwareOrderComparator.sort(rewardActionEventHandlers);
+        if(CollectionUtils.isNotEmpty(rewardActionEventHandlers)){
+            AnnotationAwareOrderComparator.sort(rewardActionEventHandlers);
+        }
         //Collections.sort(rewardActionEventHandlers, Comparator.comparingInt(RewardActionEventHandler::getOrder));
     }
 
