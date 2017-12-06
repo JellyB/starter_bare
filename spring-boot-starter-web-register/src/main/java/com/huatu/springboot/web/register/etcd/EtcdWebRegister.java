@@ -6,6 +6,7 @@ import com.google.common.base.Splitter;
 import com.google.common.net.HttpHeaders;
 import com.huatu.common.utils.encode.CharsetConsts;
 import com.huatu.springboot.web.register.WebRegister;
+import com.huatu.springboot.web.register.core.RegistState;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpMethod;
@@ -170,6 +171,8 @@ public class EtcdWebRegister implements WebRegister {
             };
             maintainThread.setDaemon(true);
             maintainThread.start();
+        }else{
+            pausing = false;
         }
         return doRegist();
     }
@@ -182,17 +185,23 @@ public class EtcdWebRegister implements WebRegister {
         return doUnRegist();
     }
 
+    @Override
+    public int state() {
+        if(!threadInitLock.get()){
+            return RegistState.INIT;
+        }
+        if(pausing){
+            return RegistState.PAUSING;
+        }else{
+            return RegistState.RUNNING;
+        }
+    }
+
 
     @Override
     public boolean pause() {
         pausing = true;//先设置暂停状态，防止继续注册
         return doUnRegist();
-    }
-
-    @Override
-    public boolean resume(){
-        pausing = false;
-        return doRegist();
     }
 
     /**

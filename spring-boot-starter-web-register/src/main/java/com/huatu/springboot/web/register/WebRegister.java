@@ -10,6 +10,13 @@ public interface WebRegister {
 
     boolean unregister();
 
+    /**
+     * 返回目前注册状态，
+     * 对于不区分pause和regist的，无需返回pause状态
+     * @return
+     */
+    int state();
+
     default boolean pause(){
         return unregister();
     }
@@ -17,4 +24,7 @@ public interface WebRegister {
     default boolean resume(){
         return regist();
     }
+
+
+
 }

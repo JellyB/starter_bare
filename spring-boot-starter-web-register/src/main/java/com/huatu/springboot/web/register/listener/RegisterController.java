@@ -2,10 +2,7 @@ package com.huatu.springboot.web.register.listener;
 
 import com.huatu.springboot.web.register.WebRegister;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author hanchao
@@ -18,7 +15,7 @@ public class RegisterController {
     private WebRegister webRegister;
     @PostMapping
     public Object control(@RequestParam("_action")String action){
-        boolean result = false;
+        Object result = false;
         //不允许注销，因为注销后将无法直接恢复
         switch (action){
             case "regist":
@@ -34,5 +31,10 @@ public class RegisterController {
                 break;
         }
         return result;
+    }
+
+    @GetMapping
+    public Object state(){
+        return webRegister.state();
     }
 }
