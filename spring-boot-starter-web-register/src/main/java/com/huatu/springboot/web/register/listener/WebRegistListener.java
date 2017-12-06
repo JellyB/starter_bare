@@ -17,9 +17,15 @@ import org.springframework.context.event.ContextClosedEvent;
 @Slf4j
 public class WebRegistListener implements ApplicationListener,ExitCodeGenerator,DisposableBean {
     private WebRegister webRegister;
+    private boolean registOnStartup;
 
     public WebRegistListener(WebRegister webRegister) {
+        this(webRegister,true);
+    }
+
+    public WebRegistListener(WebRegister webRegister, boolean registOnStartup) {
         this.webRegister = webRegister;
+        this.registOnStartup = registOnStartup;
     }
 
     @Override
@@ -33,7 +39,7 @@ public class WebRegistListener implements ApplicationListener,ExitCodeGenerator,
         }
         //org.springframework.boot.context.embedded.EmbeddedServletContainerInitializedEvent 容器启动完成
         log.info("catch spring event,{}",event.getClass());
-        if(event instanceof ApplicationReadyEvent){
+        if(event instanceof ApplicationReadyEvent && registOnStartup){
             log.info("app start,regist...");
             webRegister.regist();
         }else if(event instanceof ContextClosedEvent){

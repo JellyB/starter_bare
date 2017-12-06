@@ -9,4 +9,12 @@ public interface WebRegister {
     boolean regist();
 
     boolean unregister();
+
+    default boolean pause(){
+        return unregister();
+    }
+
+    default boolean resume(){
+        return regist();
+    }
 }

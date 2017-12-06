@@ -15,4 +15,5 @@ public class RegisterConfig {
     private String [] preferedNetworks;
     private int port;
     private String prefix;
+    private boolean registOnStartup = true;
 }

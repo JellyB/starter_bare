@@ -48,6 +48,7 @@ public class EtcdWebRegister implements WebRegister {
     private static Thread maintainThread;
     private static AtomicBoolean threadInitLock = new AtomicBoolean(false);
     private static volatile boolean running = true;
+    private static volatile boolean pausing = false;
 
 
     public EtcdWebRegister(String connectString, String host, int port, String serverName, String prefix){
@@ -112,37 +113,7 @@ public class EtcdWebRegister implements WebRegister {
         return false;
     }
 
-
-
-    @Override
-    public boolean regist() {
-        log.info("start register server http(s)://{}:{} to {} .",host,port,etcdServerNode);
-        if(threadInitLock.compareAndSet(false,true)){
-            maintainThread = new Thread(){
-                @Override
-                public void run() {
-                    for(;running;){
-                        try {
-                            Thread.sleep(TimeUnit.MILLISECONDS.convert(POLLING, TimeUnit.SECONDS)); // 一分钟续约一次
-                            if(running) {
-                                doRegist();
-                            }
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            };
-            maintainThread.setDaemon(true);
-            maintainThread.start();
-        }
-        return doRegist();
-    }
-
-    @Override
-    public boolean unregister() {
-        log.info("start unregister the server from etcd. node={}",etcdServerNode);
-        running = false;
+    private boolean doUnRegist(){
         boolean success = false;
         for (String etcdServer : etcdServers) {
             URL url;
@@ -177,6 +148,52 @@ public class EtcdWebRegister implements WebRegister {
         return success;
     }
 
+
+    @Override
+    public boolean regist() {
+        log.info("start register server http(s)://{}:{} to {} .",host,port,etcdServerNode);
+        if(threadInitLock.compareAndSet(false,true)){
+            maintainThread = new Thread(){
+                @Override
+                public void run() {
+                    for(;running;){
+                        try {
+                            Thread.sleep(TimeUnit.MILLISECONDS.convert(POLLING, TimeUnit.SECONDS)); // 一分钟续约一次
+                            if(running && !pausing) {
+                                doRegist();
+                            }
+                        } catch (InterruptedException e) {
+                            log.info("interrupt thread...");
+                        }
+                    }
+                }
+            };
+            maintainThread.setDaemon(true);
+            maintainThread.start();
+        }
+        return doRegist();
+    }
+
+    @Override
+    public boolean unregister() {
+        log.info("start unregister the server from etcd. node={}",etcdServerNode);
+        running = false;
+        maintainThread.interrupt();
+        return doUnRegist();
+    }
+
+
+    @Override
+    public boolean pause() {
+        pausing = true;//先设置暂停状态，防止继续注册
+        return doUnRegist();
+    }
+
+    @Override
+    public boolean resume(){
+        pausing = false;
+        return doRegist();
+    }
 
     /**
      * 转换为map消息体
