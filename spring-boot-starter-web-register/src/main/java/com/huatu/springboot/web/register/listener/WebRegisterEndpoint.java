@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 //@RestController
 //@RequestMapping("/admin/webRegister")
-public class RegisterEndpoint implements MvcEndpoint {
+public class WebRegisterEndpoint implements MvcEndpoint {
     @Autowired
     private WebRegister webRegister;
     @PostMapping
