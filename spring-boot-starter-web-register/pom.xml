@@ -28,5 +28,12 @@
             <groupId>com.huatu.commons</groupId>
             <artifactId>common-utils</artifactId>
         </dependency>
+
+        <!--监控-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 </project>

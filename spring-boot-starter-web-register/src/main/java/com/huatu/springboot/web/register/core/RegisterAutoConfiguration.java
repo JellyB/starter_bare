@@ -5,7 +5,7 @@ import com.google.common.primitives.Ints;
 import com.huatu.common.utils.env.IpAddrUtil;
 import com.huatu.springboot.web.register.WebRegister;
 import com.huatu.springboot.web.register.etcd.EtcdWebRegister;
-import com.huatu.springboot.web.register.listener.RegisterController;
+import com.huatu.springboot.web.register.listener.RegisterEndpoint;
 import com.huatu.springboot.web.register.listener.WebRegistListener;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -76,7 +76,7 @@ public class RegisterAutoConfiguration {
     @Bean
     @ConditionalOnBean(WebRegister.class)
     @ConditionalOnWebApplication
-    public RegisterController registerController(){
-        return new RegisterController();
+    public RegisterEndpoint registerController(){
+        return new RegisterEndpoint();
     }
 }

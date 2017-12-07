@@ -2,18 +2,24 @@ package com.huatu.springboot.web.register.listener;
 
 import com.huatu.springboot.web.register.WebRegister;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.boot.actuate.endpoint.Endpoint;
+import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author hanchao
  * @date 2017/12/6 17:33
  */
-@RestController
-@RequestMapping("/admin/webRegister")
-public class RegisterController {
+//@RestController
+//@RequestMapping("/admin/webRegister")
+public class RegisterEndpoint implements MvcEndpoint {
     @Autowired
     private WebRegister webRegister;
     @PostMapping
+    @ResponseBody
     public Object control(@RequestParam("_action")String action){
         Object result = false;
         //不允许注销，因为注销后将无法直接恢复
@@ -34,7 +40,23 @@ public class RegisterController {
     }
 
     @GetMapping
+    @ResponseBody
     public Object state(){
         return webRegister.state();
+    }
+
+    @Override
+    public String getPath() {
+        return "/webRegister";
+    }
+
+    @Override
+    public boolean isSensitive() {
+        return false;
+    }
+
+    @Override
+    public Class<? extends Endpoint> getEndpointType() {
+        return null;
     }
 }
