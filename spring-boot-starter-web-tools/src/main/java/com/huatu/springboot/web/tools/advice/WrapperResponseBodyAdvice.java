@@ -1,7 +1,7 @@
 package com.huatu.springboot.web.tools.advice;
 
+import com.huatu.common.CommonResult;
 import com.huatu.common.Result;
-import com.huatu.common.SuccessMessage;
 import com.huatu.common.SuccessResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -46,7 +46,7 @@ public class WrapperResponseBodyAdvice implements ResponseBodyAdvice {
             return o;
         }
         //最后进行包装
-        return o == null ? SuccessMessage.create() : new SuccessResponse(o);
+        return o == null ? CommonResult.SUCCESS : new SuccessResponse(o);
     }
 
 
