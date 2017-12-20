@@ -60,7 +60,7 @@ public class CacheManageBootEndpoint  implements MvcEndpoint {
     @PostMapping(consumes = MediaType.ALL_VALUE)
     @ResponseBody
     public Object handle(@RequestParam("_action")String action,
-                         @RequestParam(value = "id",required = false)int cacheId,
+                         @RequestParam(value = "id",required = false,defaultValue = "0")int cacheId,
                          @RequestBody(required = false)Map<String,Object> params) throws IOException {
         Object result;
         switch (action){
