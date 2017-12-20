@@ -4,7 +4,6 @@ import com.huatu.common.spring.cache.Cached;
 import com.huatu.common.spring.cache.CachedInfosBuilder;
 import com.huatu.springboot.cache.spel.SpelExecutor;
 import com.huatu.springboot.cache.support.web.CacheManageBootEndpoint;
-import com.huatu.springboot.cache.support.web.CacheManageServlet;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +37,7 @@ public class CacheManageAutoConfiguration {
             try {
                 String value = properties.getPrefix().get(key);
                 if(StringUtils.isNotBlank(value)){
-                    CacheManageServlet.prefix.put(Cached.DataScourseType.valueOf(key.toUpperCase()),value);
+                    CacheManageBootEndpoint.prefix.put(Cached.DataScourseType.valueOf(key.toUpperCase()),value);
                 }
             } catch(Exception e){
                 log.error("",e);

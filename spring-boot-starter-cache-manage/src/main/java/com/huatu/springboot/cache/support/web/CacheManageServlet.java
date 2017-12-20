@@ -13,7 +13,6 @@ import com.huatu.common.utils.collection.HashMapBuilder;
 import com.huatu.common.utils.reflect.BeanUtil;
 import com.huatu.common.utils.web.RequestUtil;
 import com.huatu.springboot.cache.spel.SpelExecutor;
-import com.huatu.springboot.cache.support.CacheManageEndPoint;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -34,7 +33,7 @@ import static com.huatu.springboot.cache.conf.CacheManageConsts.*;
  * @author hanchao
  * @date 2017/10/7 14:39
  */
-@CacheManageEndPoint
+@Deprecated
 public class CacheManageServlet extends HttpServlet {
 
     public static Map<Cached.DataScourseType,String> prefix = Maps.newHashMap();

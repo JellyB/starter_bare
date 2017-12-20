@@ -37,6 +37,7 @@ import java.util.Map;
 //TODO 可以直接使用controller,参考BasicErrorController
 //@RequestMapping("${server.error.path:${error.path:/error}}")
 //暂时从cloud复制过来使用，后续可能在boot包中直接使用
+@Deprecated
 public abstract class ServletWrappingEndpoint implements InitializingBean,
         ApplicationContextAware, ServletContextAware, MvcEndpoint {
 
