@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Ints;
-import com.huatu.common.CommonErrors;
+import com.huatu.common.CommonResult;
 import com.huatu.common.SuccessResponse;
 import com.huatu.common.spring.cache.Cached;
 import com.huatu.common.spring.cache.CachedInfoHolder;
@@ -91,10 +91,10 @@ public class CacheManageServlet extends HttpServlet {
         CachedInfoHolder.CachedInfo cachedInfo = CachedInfoHolder.get(cacheId);
 
         if(cachedInfo == null){
-            write(resp,CommonErrors.RESOURCE_NOT_FOUND);
+            write(resp,CommonResult.RESOURCE_NOT_FOUND);
         }
         if(cachedInfo.getSourceType() == Cached.DataScourseType.GETINSIDE || cachedInfo.getSourceType() == Cached.DataScourseType.DELINSIDE){
-            write(resp,CommonErrors.FORBIDDEN);
+            write(resp, CommonResult.FORBIDDEN);
         }
 
         Object execute = executeRequest(req, cachedInfo);
@@ -110,10 +110,10 @@ public class CacheManageServlet extends HttpServlet {
         int cacheId = Optional.ofNullable((Ints.tryParse(req.getParameter("id")))).orElse(0);
         CachedInfoHolder.CachedInfo cachedInfo = CachedInfoHolder.get(cacheId);
         if(cachedInfo == null){
-            write(resp,CommonErrors.RESOURCE_NOT_FOUND);
+            write(resp,CommonResult.RESOURCE_NOT_FOUND);
         }
         if(cachedInfo.getSourceType() != Cached.DataScourseType.GETINSIDE){
-            write(resp,CommonErrors.FORBIDDEN);
+            write(resp,CommonResult.FORBIDDEN);
         }
 
         Object result = executeRequest(req, cachedInfo);
@@ -125,10 +125,10 @@ public class CacheManageServlet extends HttpServlet {
         int cacheId = Optional.ofNullable((Ints.tryParse(req.getParameter("id")))).orElse(0);
         CachedInfoHolder.CachedInfo cachedInfo = CachedInfoHolder.get(cacheId);
         if(cachedInfo == null){
-            write(resp,CommonErrors.RESOURCE_NOT_FOUND);
+            write(resp,CommonResult.RESOURCE_NOT_FOUND);
         }
         if(cachedInfo.getSourceType() != Cached.DataScourseType.DELINSIDE){
-            write(resp,CommonErrors.FORBIDDEN);
+            write(resp,CommonResult.FORBIDDEN);
         }
 
         Object result = executeRequest(req, cachedInfo);

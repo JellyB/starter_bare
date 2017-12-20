@@ -1,6 +1,6 @@
 package com.huatu.springboot.web.tools.exception;
 
-import com.huatu.common.CommonErrors;
+import com.huatu.common.CommonResult;
 import com.huatu.common.ErrorResult;
 import com.huatu.common.exception.ArgsValidException;
 import com.huatu.common.exception.BizException;
@@ -93,7 +93,7 @@ public class GlobalExceptionHandler implements InitializingBean {
         if(log.isDebugEnabled()){
             log.debug("catch exception : ",exception);
         }
-        return resolveAndHandle(request,handlerMethod,exception,CommonErrors.INVALID_ARGUMENTS,HttpStatus.BAD_REQUEST);
+        return resolveAndHandle(request,handlerMethod,exception, CommonResult.INVALID_ARGUMENTS,HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -108,7 +108,7 @@ public class GlobalExceptionHandler implements InitializingBean {
         if(log.isDebugEnabled()){
             log.debug("catch exception : ",exception);
         }
-        return resolveAndHandle(request,null,exception,CommonErrors.RESOURCE_NOT_FOUND,HttpStatus.NOT_FOUND);
+        return resolveAndHandle(request,null,exception,CommonResult.RESOURCE_NOT_FOUND,HttpStatus.NOT_FOUND);
     }
 
 
@@ -123,7 +123,7 @@ public class GlobalExceptionHandler implements InitializingBean {
     public ModelAndView globalErrorHandler(HttpServletRequest request, HandlerMethod handlerMethod, Exception exception){
         //不认识的错误，打印完整的异常信息
         log.error("catch exception : ",exception);
-        return resolveAndHandle(request,handlerMethod,exception,CommonErrors.SERVICE_INTERNAL_ERROR,HttpStatus.INTERNAL_SERVER_ERROR);
+        return resolveAndHandle(request,handlerMethod,exception,CommonResult.SERVICE_INTERNAL_ERROR,HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     public ModelAndView resolveAndHandle(HttpServletRequest request, HandlerMethod handlerMethod,Exception ex,ErrorResult optionalError,HttpStatus optionalStatus){
@@ -177,7 +177,7 @@ public class GlobalExceptionHandler implements InitializingBean {
         public ErrorResult resolve(Exception ex) {
             if(ex instanceof BizException && ((BizException) ex).getCustomMessage() != null){
                 ErrorResult optional = ((BizException) ex).getErrorResult();
-                return optional == null ? CommonErrors.SERVICE_INTERNAL_ERROR : ErrorResult.create(optional.getCode(),((BizException) ex).getCustomMessage());
+                return optional == null ? CommonResult.SERVICE_INTERNAL_ERROR : ErrorResult.create(optional.getCode(),((BizException) ex).getCustomMessage());
             }
             return null;
         }

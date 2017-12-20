@@ -1,6 +1,6 @@
 package com.huatu.tiku.springboot.users.service;
 
-import com.huatu.common.CommonErrors;
+import com.huatu.common.CommonResult;
 import com.huatu.common.exception.BizException;
 import com.huatu.common.exception.UnauthorizedException;
 import com.huatu.tiku.springboot.users.bean.UserSession;
@@ -229,12 +229,12 @@ public class UserSessionService {
             final String tipMessage = String.format(TIP_MESSAGE, time);
             //设置过期一个月,让自动过期
             sessionRedisTemplate.expire(token,30, TimeUnit.DAYS);
-            throw new UnauthorizedException(CommonErrors.LOGIN_ON_OTHER_DEVICE,tipMessage);
+            throw new UnauthorizedException(CommonResult.LOGIN_ON_OTHER_DEVICE,tipMessage);
         }
 
         if (isExpire(token)) {//session过期
             //拋出普通的session過期異常
-            throw new BizException(CommonErrors.SESSION_EXPIRE);
+            throw new BizException(CommonResult.SESSION_EXPIRE);
         }
     }
 
@@ -299,7 +299,7 @@ public class UserSessionService {
      */
     public UserSession assertSession(UserSession userSession) throws BizException {
         if(userSession == null){
-            throw new BizException(CommonErrors.SESSION_EXPIRE);
+            throw new BizException(CommonResult.SESSION_EXPIRE);
         }
         //有新设备登录，当前设备已经被踢掉
         if ("1".equals(userSession.getOldToken())) {
@@ -308,12 +308,12 @@ public class UserSessionService {
             final String tipMessage = String.format(TIP_MESSAGE, time);
             //设置过期一个月,让自动过期
             sessionRedisTemplate.expire(userSession.getToken(),30, TimeUnit.DAYS);
-            throw new UnauthorizedException(CommonErrors.LOGIN_ON_OTHER_DEVICE,tipMessage);
+            throw new UnauthorizedException(CommonResult.LOGIN_ON_OTHER_DEVICE,tipMessage);
         }
 
         if (isExpire(userSession.getExpireTime())) {//session过期
             //拋出普通的session過期異常
-            throw new UnauthorizedException(CommonErrors.SESSION_EXPIRE);
+            throw new UnauthorizedException(CommonResult.SESSION_EXPIRE);
         }
         return userSession;
     }
