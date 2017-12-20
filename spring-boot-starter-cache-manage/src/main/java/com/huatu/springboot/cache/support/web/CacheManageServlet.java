@@ -14,7 +14,6 @@ import com.huatu.common.utils.reflect.BeanUtil;
 import com.huatu.common.utils.web.RequestUtil;
 import com.huatu.springboot.cache.spel.SpelExecutor;
 import com.huatu.springboot.cache.support.CacheManageEndPoint;
-import org.apache.commons.io.IOUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -166,7 +165,7 @@ public class CacheManageServlet extends HttpServlet {
      */
     private Object executeRequest(HttpServletRequest req, CachedInfoHolder.CachedInfo cachedInfo) throws IOException {
         SpelExecutor executor = getExecutor(req);
-        Map<String,Object> reqParams = JSON.parseObject(IOUtils.toString(req.getInputStream()));
+        Map<String,Object> reqParams = (Map<String, Object>) req.getAttribute("REQUEST_BODY_WRAPPER");
         Map<String,Object> execParams = Maps.newHashMap();
         for (CachedInfoHolder.CacheParam cacheParam : cachedInfo.getParams()) {
             String paramName = cacheParam.getValue();
@@ -192,7 +191,7 @@ public class CacheManageServlet extends HttpServlet {
                 }
             }
         }
-        if(cachedInfo.getKey().length > 0 && cachedInfo.getSourceType() == Cached.DataScourseType.REDIS){
+        if(cachedInfo.getKey().length > 1 && cachedInfo.getSourceType() == Cached.DataScourseType.REDIS){
             List<Object> result = Lists.newArrayList();
             for (String key : cachedInfo.getKey()) {
                 result.add(executor.execute(key, execParams));

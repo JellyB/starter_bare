@@ -22,6 +22,7 @@ import org.springframework.boot.actuate.endpoint.Endpoint;
 import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.ModelAndView;
@@ -31,6 +32,8 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
+
 //TODO 可以直接使用controller,参考BasicErrorController
 //@RequestMapping("${server.error.path:${error.path:/error}}")
 //暂时从cloud复制过来使用，后续可能在boot包中直接使用
@@ -46,6 +49,7 @@ public abstract class ServletWrappingEndpoint implements InitializingBean,
     private boolean enabled = true;
 
     private final ServletWrappingController controller = new ServletWrappingController();
+
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -73,8 +77,9 @@ public abstract class ServletWrappingEndpoint implements InitializingBean,
     }
 
     @RequestMapping("**")
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response)
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, @RequestBody(required = false) Map<String,Object> content)
             throws Exception {
+        request.setAttribute("REQUEST_BODY_WRAPPER", content);
         return this.controller.handleRequest(request, response);
     }
 
