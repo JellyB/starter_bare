@@ -62,7 +62,7 @@ public class DegradeAspect {
         if(returnType.equals(Void.TYPE)){
             return null;
         }
-        if(returnType.equals(Boolean.class)){
+        if(returnType.equals(Boolean.TYPE)){
             return false;
         }
         if(returnType.equals(Character.TYPE)){
