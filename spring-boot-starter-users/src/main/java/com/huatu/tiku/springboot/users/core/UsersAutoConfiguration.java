@@ -30,7 +30,7 @@ public class UsersAutoConfiguration {
      * @return
      */
     @Bean
-    public SessionRedisTemplate sessionRedisTemplate(@Autowired @Qualifier("jediSentinelPool") JedisSentinelPool jediSentinelPool){
+    public SessionRedisTemplate userSessionRedisTemplate(@Autowired @Qualifier("jediSentinelPool") JedisSentinelPool jediSentinelPool){
         return new SessionRedisTemplate(jediSentinelPool);
     }
 
