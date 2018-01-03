@@ -1,4 +1,4 @@
-package com.huatu.springboot.dubbo.support;
+package com.huatu.springboot.dubbo.health;
 
 import com.alibaba.dubbo.config.spring.ReferenceBean;
 import com.alibaba.dubbo.rpc.service.EchoService;
@@ -26,10 +26,6 @@ public class DubboHealthIndicator extends AbstractHealthIndicator implements App
     protected void doHealthCheck(Health.Builder builder) throws Exception {
         builder.up();
         Map<String, ReferenceBean> references = applicationContext.getBeansOfType(ReferenceBean.class);
-        if(references.isEmpty()){
-            AnnotationBean annotationBean = applicationContext.getBean(AnnotationBean.class);
-            references = annotationBean.getAllReferences();
-        }
         references.forEach( (beanName,referenceBean) -> {
             String referenceName = referenceBean.getInterface();
             String key = beanName+" -> "+referenceName;

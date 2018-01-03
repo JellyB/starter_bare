@@ -1,6 +1,4 @@
-org.springframework.context.ApplicationContextInitializer=\
-com.huatu.springboot.dubbo.core.DubboConfigurationApplicationContextInitializer
-org.springframework.context.ApplicationListener=\
-com.huatu.springboot.dubbo.support.DubboHolderListener
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.huatu.springboot.dubbo.core.DubboAutoConfiguration
+com.alibaba.boot.dubbo.DubboAutoConfiguration,\
+com.alibaba.boot.dubbo.DubboProviderAutoConfiguration,\
+com.alibaba.boot.dubbo.DubboConsumerAutoConfiguration
