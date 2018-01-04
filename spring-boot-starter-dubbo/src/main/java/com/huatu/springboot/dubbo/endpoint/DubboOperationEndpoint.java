@@ -1,11 +1,11 @@
 package com.huatu.springboot.dubbo.endpoint;
 
-import com.alibaba.boot.dubbo.DubboProperties;
-import com.alibaba.boot.dubbo.listener.ProviderExportListener;
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
 import com.alibaba.dubbo.registry.Registry;
 import com.alibaba.dubbo.registry.RegistryFactory;
+import com.huatu.springboot.dubbo.DubboProperties;
+import com.huatu.springboot.dubbo.listener.ProviderExportListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.Endpoint;
 import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint;
@@ -67,7 +67,7 @@ public class DubboOperationEndpoint implements MvcEndpoint {
                 if (this.registry == null) {
                     ExtensionLoader<RegistryFactory> extensionLoader =
                             ExtensionLoader.getExtensionLoader(RegistryFactory.class);
-                    URL url = URL.valueOf(this.dubboProperties.getRegistry());
+                    URL url = URL.valueOf(this.dubboProperties.getRegistry().getAddress());
                     RegistryFactory registryFactory = extensionLoader.getDefaultExtension();
                     this.registry = registryFactory.getRegistry(url);
                 }
