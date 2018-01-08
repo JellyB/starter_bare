@@ -18,24 +18,24 @@ public class DubboProperties {
     /**
      *
      */
-    private ApplicationConfig application;
+    private ApplicationConfig application = new ApplicationConfig();
     /**
      *
      */
-    private RegistryConfig registry;
+    private RegistryConfig registry = new RegistryConfig();
     /**
      *
      */
-    private ProtocolConfig protocol;
+    private ProtocolConfig protocol = new ProtocolConfig();
     /**
      *
      */
-    private ProviderConfig provider;
+    private ProviderConfig provider = new ProviderConfig();
 
     /**
      *
      */
-    private ConsumerConfig consumer;
+    private ConsumerConfig consumer = new ConsumerConfig();
 
 
 }

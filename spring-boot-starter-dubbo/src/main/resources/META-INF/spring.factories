@@ -1,4 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.alibaba.boot.dubbo.DubboAutoConfiguration,\
-com.alibaba.boot.dubbo.DubboProviderAutoConfiguration,\
-com.alibaba.boot.dubbo.DubboConsumerAutoConfiguration
+com.huatu.springboot.dubbo.DubboAutoConfiguration,\
+com.huatu.springboot.dubbo.DubboProviderAutoConfiguration,\
+com.huatu.springboot.dubbo.DubboConsumerAutoConfiguration
