@@ -92,6 +92,7 @@ public class DubboConsumerAutoConfiguration {
                                                 .setApplication(DubboConsumerAutoConfiguration.this.applicationConfig);
                                         consumerBean.afterPropertiesSet();
                                         // 理论上dubboReference不能为空，否则就会抛NullPointerException了
+                                        //consumer.get()得到的reference实例很重，必须缓存。和2.5.3原生的annotationbean区别是此处不缓存实例化的ReferenceBean
                                         dubboReference = consumerBean.get();
                                         DubboConsumerAutoConfiguration.DUBBO_REFERENCES_MAP.put(classIdBean,
                                                 dubboReference);
