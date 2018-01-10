@@ -28,4 +28,18 @@ public class DruidProperties {
     private String filters;
     private String validationQuery;
     private Properties connectionProperties;
+    private MonitorProperties monitor = new MonitorProperties();
+
+
+    @Data
+    public static class MonitorProperties {
+        private String druidStatView;
+        private String druidWebStatFilter;
+        private String allow;
+        private String deny;
+        private String loginUsername;
+        private String loginPassword;
+        private String exclusions;
+        private String resetEnable;
+    }
 }
