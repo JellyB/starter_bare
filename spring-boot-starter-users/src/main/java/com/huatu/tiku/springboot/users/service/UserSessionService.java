@@ -3,7 +3,7 @@ package com.huatu.tiku.springboot.users.service;
 import com.huatu.common.CommonResult;
 import com.huatu.common.exception.BizException;
 import com.huatu.common.exception.UnauthorizedException;
-import com.huatu.tiku.springboot.users.bean.UserSession;
+import com.huatu.tiku.common.bean.user.UserSession;
 import com.huatu.tiku.springboot.users.common.UserRedisSessionKeys;
 import com.huatu.tiku.springboot.users.support.SessionRedisTemplate;
 import org.apache.commons.collections.MapUtils;
