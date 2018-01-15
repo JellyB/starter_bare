@@ -11,14 +11,15 @@ import org.springframework.web.method.annotation.RequestHeaderMethodArgumentReso
  * @author hanchao
  * @date 2017/8/24 19:45
  */
-public class TokenMethodArgumentResolver extends RequestHeaderMethodArgumentResolver{
+public class TokenMethodArgumentResolver extends RequestHeaderMethodArgumentResolver {
     private UserSessionService userSessionService;
+
     /**
      * @param beanFactory a bean factory to use for resolving  ${...}
      *                    placeholder and #{...} SpEL expressions in default values;
      *                    or {@code null} if default values are not expected to have expressions
      */
-    public TokenMethodArgumentResolver(ConfigurableBeanFactory beanFactory,UserSessionService userSessionService) {
+    public TokenMethodArgumentResolver(ConfigurableBeanFactory beanFactory, UserSessionService userSessionService) {
         super(beanFactory);
         this.userSessionService = userSessionService;
     }
@@ -37,6 +38,7 @@ public class TokenMethodArgumentResolver extends RequestHeaderMethodArgumentReso
 
     /**
      * 参数装配
+     *
      * @param name
      * @param parameter
      * @param request
@@ -50,39 +52,45 @@ public class TokenMethodArgumentResolver extends RequestHeaderMethodArgumentReso
         boolean needSimple = false;
         Token config = parameter.getParameterAnnotation(Token.class);
 
-        if(clazz == int.class || Integer.class.isAssignableFrom(clazz)){
+        //从当前线程存储获取，如果没有再去redis查找，减少访问次数
+        UserSession userSession = UserSessionHolder.get();
+        if (clazz == int.class || Integer.class.isAssignableFrom(clazz)) {
             //需要返回int类型
             needSimple = true;
         }
-        if(!config.check() && needSimple){
-            return userSessionService.getUid(token);
+
+        if (!config.check() && needSimple) {
+            return userSession == null ? userSessionService.getUid(token) : userSession.getId();
         }
 
-        UserSession userSession = userSessionService.getUserSession(token);
-        if(config.check()){
+        if(userSession == null){
+            userSession = userSessionService.getUserSession(token);
+        }
+        if (config.check()) {
             userSessionService.assertSession(userSession);
         }
-        if(userSession == null){
-            return needSimple ? -1:null;
+        if (userSession == null) {
+            return needSimple ? -1 : null;
+        }else{
+            return needSimple ? userSession.getId() : userSession;
         }
-        return needSimple ? userSession.getId():userSession;
     }
 
     /**
      * 是否合法的参数类型
+     *
      * @param clazz
      * @return
      */
-    private boolean isLegalType(Class<?> clazz){
-        if(clazz == int.class || Integer.class.isAssignableFrom(clazz)){
+    private boolean isLegalType(Class<?> clazz) {
+        if (clazz == int.class || Integer.class.isAssignableFrom(clazz)) {
             return true;
         }
-        if(UserSession.class.isAssignableFrom(clazz)){
+        if (UserSession.class.isAssignableFrom(clazz)) {
             return true;
         }
         return false;
     }
-
 
 
     private static class TokenNamedValueInfo extends NamedValueInfo {
@@ -91,4 +99,5 @@ public class TokenMethodArgumentResolver extends RequestHeaderMethodArgumentReso
             super(annotation.name(), annotation.required(), annotation.defaultValue());
         }
     }
+
 }

@@ -12,12 +12,13 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Token {
+    String DEFAULT_NAME = "token";
 
     @AliasFor("name")
-    String value() default "token";
+    String value() default DEFAULT_NAME;
 
     @AliasFor("value")
-    String name() default "token";
+    String name() default DEFAULT_NAME;
 
     /**
      * required和spring集成后不代表头信息不存在，而是说最后的值存不存在，所以是uid，或者user bean,设置defaultValue后可以绕过这个为null的报错

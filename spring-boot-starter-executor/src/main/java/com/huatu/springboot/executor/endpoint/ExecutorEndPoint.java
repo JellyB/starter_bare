@@ -1,6 +1,6 @@
 package com.huatu.springboot.executor.endpoint;
 
-import com.huatu.springboot.executor.support.NamedThreadPoolTaskExecutor;
+import com.huatu.common.spring.executor.NamedThreadPoolTaskExecutor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.actuate.endpoint.AbstractEndpoint;

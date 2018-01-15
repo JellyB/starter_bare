@@ -24,6 +24,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.util.WebUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -127,6 +128,8 @@ public class GlobalExceptionHandler implements InitializingBean {
     }
 
     public ModelAndView resolveAndHandle(HttpServletRequest request, HandlerMethod handlerMethod,Exception ex,ErrorResult optionalError,HttpStatus optionalStatus){
+        request.setAttribute(WebUtils.ERROR_EXCEPTION_ATTRIBUTE,ex);
+
         ErrorResult errorResult = null;
         HttpStatus httpStatus = null;
         if(needResolve){
