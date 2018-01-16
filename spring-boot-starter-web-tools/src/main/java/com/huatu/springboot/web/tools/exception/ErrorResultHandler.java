@@ -12,5 +12,5 @@ import javax.servlet.http.HttpServletRequest;
  * @date 2017/4/9 18:41
  */
 public interface ErrorResultHandler {
-    ModelAndView handle( HttpServletRequest request, HandlerMethod handlerMethod, Object errorResult, HttpStatus status);
+    ModelAndView handle( HttpServletRequest request, HandlerMethod handlerMethod, Object errorResult, HttpStatus status,Exception exception);
 }

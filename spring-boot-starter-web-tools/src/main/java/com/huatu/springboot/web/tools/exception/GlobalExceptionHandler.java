@@ -5,6 +5,7 @@ import com.huatu.common.ErrorResult;
 import com.huatu.common.exception.ArgsValidException;
 import com.huatu.common.exception.BizException;
 import com.huatu.common.exception.UnauthorizedException;
+import com.huatu.springboot.web.tools.indicator.ExceptionHealthIndicator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -49,6 +50,8 @@ public class GlobalExceptionHandler implements InitializingBean {
     private List<ExceptionResolver> exceptionResolvers;
     @Autowired
     private ErrorResultHandler errorHandler;
+    @Autowired
+    private ExceptionCounter exceptionCounter;
 
     private boolean needResolve = false;
 
@@ -134,7 +137,7 @@ public class GlobalExceptionHandler implements InitializingBean {
         HttpStatus httpStatus = null;
         if(needResolve){
             for (ExceptionResolver resolver : exceptionResolvers) {
-                if(resolver.canResolve(ex)){
+                if(resolver.canResolve(ex,optionalStatus.value())){
                     errorResult = resolver.resolve(ex);
                     httpStatus = resolver.status(ex);
                     break;
@@ -147,7 +150,12 @@ public class GlobalExceptionHandler implements InitializingBean {
         if(httpStatus == null){
             httpStatus = optionalStatus;
         }
-        return errorHandler.handle(request,handlerMethod,errorResult,httpStatus);
+
+        // 5xx异常需要记录
+        if(httpStatus.value() >= 500){
+            exceptionCounter.add(ex);
+        }
+        return errorHandler.handle(request,handlerMethod,errorResult,httpStatus,ex);
     }
 
 
@@ -174,6 +182,19 @@ public class GlobalExceptionHandler implements InitializingBean {
         return new BizExceptionResolver();
     }
 
+
+    @Bean
+    @ConditionalOnMissingBean(ExceptionCounter.class)
+    public ExceptionCounter exceptionCounter(){
+        return new SimpleExceptionWindowCounter(10);
+    }
+
+    @Bean
+    public ExceptionHealthIndicator exceptionHealthIndicator(){
+        return new ExceptionHealthIndicator();
+    }
+
+
     static class BizExceptionResolver implements ExceptionResolver {
 
         @Override
@@ -186,7 +207,7 @@ public class GlobalExceptionHandler implements InitializingBean {
         }
 
         @Override
-        public boolean canResolve(Exception ex) {
+        public boolean canResolve(Exception ex,int httpstatus) {
             if(ex instanceof BizException && ((BizException) ex).getCustomMessage() != null){
                 return true;
             }
