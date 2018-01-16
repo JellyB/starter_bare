@@ -42,5 +42,11 @@
             <version>${default.env.version}</version>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>com.huatu.springboot</groupId>
+            <artifactId>spring-boot-starter-web-tools</artifactId>
+            <version>${default.env.version}</version>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 </project>

@@ -22,10 +22,9 @@ public interface ExceptionResolver {
      * @param ex
      * @return
      */
-    boolean canResolve(Exception ex,int httpStatus);
+    boolean canResolve(Exception ex,HttpStatus httpStatus);
 
     /**
-     * 方便在spring cloud的异常追踪中，可以追踪特别status
      * @param ex
      * @return
      */

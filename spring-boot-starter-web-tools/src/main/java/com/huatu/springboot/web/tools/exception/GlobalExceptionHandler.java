@@ -137,7 +137,7 @@ public class GlobalExceptionHandler implements InitializingBean {
         HttpStatus httpStatus = null;
         if(needResolve){
             for (ExceptionResolver resolver : exceptionResolvers) {
-                if(resolver.canResolve(ex,optionalStatus.value())){
+                if(resolver.canResolve(ex,optionalStatus)){
                     errorResult = resolver.resolve(ex);
                     httpStatus = resolver.status(ex);
                     break;
@@ -152,7 +152,7 @@ public class GlobalExceptionHandler implements InitializingBean {
         }
 
         // 5xx异常需要记录
-        if(httpStatus.value() >= 500){
+        if(httpStatus.is5xxServerError()){
             exceptionCounter.add(ex);
         }
         return errorHandler.handle(request,handlerMethod,errorResult,httpStatus,ex);
@@ -207,7 +207,7 @@ public class GlobalExceptionHandler implements InitializingBean {
         }
 
         @Override
-        public boolean canResolve(Exception ex,int httpstatus) {
+        public boolean canResolve(Exception ex,HttpStatus httpstatus) {
             if(ex instanceof BizException && ((BizException) ex).getCustomMessage() != null){
                 return true;
             }
