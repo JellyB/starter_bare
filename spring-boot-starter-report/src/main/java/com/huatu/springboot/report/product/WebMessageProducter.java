@@ -59,36 +59,39 @@ public class WebMessageProducter implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        UserSessionHolder.clear();
-        WebReport annotation = getAnnotation(handler);
-        if(annotation != null){
-            ServletServerHttpRequest nativeRequest = new ServletServerHttpRequest(request);
-            ServletServerHttpResponse nativeResponse = new ServletServerHttpResponse(response);
-            String body = IOUtils.toString(nativeRequest.getBody());
-            String stackstrace = "";
-            Object exception = request.getAttribute(WebUtils.ERROR_EXCEPTION_ATTRIBUTE);
-            if(exception != null && exception instanceof Exception){
-                stackstrace = ExceptionUtils.getStackTrace((Exception)exception);
+        try {
+            WebReport annotation = getAnnotation(handler);
+            if(annotation != null){
+                ServletServerHttpRequest nativeRequest = new ServletServerHttpRequest(request);
+                ServletServerHttpResponse nativeResponse = new ServletServerHttpResponse(response);
+                String body = IOUtils.toString(nativeRequest.getBody());
+                String stackstrace = "";
+                Object exception = request.getAttribute(WebUtils.ERROR_EXCEPTION_ATTRIBUTE);
+                if(exception != null && exception instanceof Exception){
+                    stackstrace = ExceptionUtils.getStackTrace((Exception)exception);
+                }
+                WebReportMessage webReportMessage = WebReportMessage.builder()
+                        .name(annotation.value())
+                        .url(request.getRequestURI())
+                        .urlParameters(request.getQueryString())
+                        .method(request.getMethod())
+                        .body(body)
+                        .status(response.getStatus())
+                        .requestHeaders(nativeRequest.getHeaders())
+                        .responseHeaders(nativeResponse.getHeaders())
+                        .userSession(UserSessionHolder.get())
+                        .stacktrace(stackstrace)
+                        .build();
+
+                webReportMessage.setTimestamp(TimestampUtil.currentTimeStamp());
+                webReportMessage.setApplication(applicationContext.getEnvironment().getProperty("spring.application.name",""));
+                webReportMessage.setHost(HostCacheUtil.getHost());
+
+                messageReportExecutor.execute(this.new ReportTask(webReportMessage,annotation.extraHandler()));
+
             }
-            WebReportMessage webReportMessage = WebReportMessage.builder()
-                    .name(annotation.value())
-                    .url(request.getRequestURI())
-                    .urlParameters(request.getQueryString())
-                    .method(request.getMethod())
-                    .body(body)
-                    .status(response.getStatus())
-                    .requestHeaders(nativeRequest.getHeaders())
-                    .responseHeaders(nativeResponse.getHeaders())
-                    .userSession(UserSessionHolder.get())
-                    .stacktrace(stackstrace)
-                    .build();
-
-            webReportMessage.setTimestamp(TimestampUtil.currentTimeStamp());
-            webReportMessage.setApplication(applicationContext.getEnvironment().getProperty("spring.application.name",""));
-            webReportMessage.setHost(HostCacheUtil.getHost());
-
-            messageReportExecutor.execute(this.new ReportTask(webReportMessage,annotation.extraHandler()));
-
+        } finally {
+            UserSessionHolder.clear();
         }
 
     }
@@ -106,12 +109,16 @@ public class WebMessageProducter implements HandlerInterceptor {
         @Override
         public void run() {
             if(handlerClass != null && ExtraDataHandler.class.isAssignableFrom(handlerClass)){
-                if(applicationContext.getBean(handlerClass) == null ){
-                    log.error("cant find extra data handler for class {}",handlerClass);
-                }else{
-                    ExtraDataHandler handler = (ExtraDataHandler)applicationContext.getBean(handlerClass);
-                    Object extra = handler.extra(message);
-                    message.setExtraData(extra);
+                try {
+                    if(applicationContext.getBean(handlerClass) == null ){
+                        log.error("cant find extra data handler for class {}",handlerClass);
+                    }else{
+                        ExtraDataHandler handler = (ExtraDataHandler)applicationContext.getBean(handlerClass);
+                        Object extra = handler.extra(message);
+                        message.setExtraData(extra);
+                    }
+                } catch(Exception e){
+                    e.printStackTrace();
                 }
             }
             rabbitReporter.report(message);
