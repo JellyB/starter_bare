@@ -5,6 +5,7 @@ import com.huatu.springboot.report.support.RabbitReporter;
 import com.huatu.springboot.report.support.SimpleMessageReportExecutor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -19,6 +20,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @AutoConfigureAfter(RabbitAutoConfiguration.class)
+@AutoConfigureBefore({WebProducterAutoConfiguration.class,ExceptionProducterAutoConfiguration.class})
 @EnableConfigurationProperties(MessageReportProperties.class)
 public class ReportCoreAutoConfiguration {
     @Bean

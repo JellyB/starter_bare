@@ -5,14 +5,10 @@ import com.huatu.common.ErrorResult;
 import com.huatu.common.exception.ArgsValidException;
 import com.huatu.common.exception.BizException;
 import com.huatu.common.exception.UnauthorizedException;
-import com.huatu.springboot.web.tools.indicator.ExceptionHealthIndicator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageConversionException;
@@ -41,10 +37,10 @@ import java.util.List;
  * @author hanchao
  * @date 2017/8/31 20:52
  */
-@ConditionalOnProperty(value = "htonline.ex-handler.enabled",havingValue = "true",matchIfMissing = true)
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler implements InitializingBean {
+
     //用于子项目扩展
     @Autowired(required = false)
     private List<ExceptionResolver> exceptionResolvers;
@@ -152,7 +148,7 @@ public class GlobalExceptionHandler implements InitializingBean {
         }
 
         // 5xx异常需要记录
-        if(httpStatus.is5xxServerError()){
+        if(httpStatus != null && httpStatus.is5xxServerError()){
             exceptionCounter.add(ex);
         }
         return errorHandler.handle(request,handlerMethod,errorResult,httpStatus,ex);
@@ -167,51 +163,4 @@ public class GlobalExceptionHandler implements InitializingBean {
         }
     }
 
-
-
-
-
-    @Bean
-    @ConditionalOnMissingBean(ErrorResultHandler.class)
-    public ErrorResultHandler errorResultHandler(){
-        return new SimpleErrorResultHandler();
-    }
-
-    @Bean
-    public BizExceptionResolver bizExceptionResolver(){
-        return new BizExceptionResolver();
-    }
-
-
-    @Bean
-    @ConditionalOnMissingBean(ExceptionCounter.class)
-    public ExceptionCounter exceptionCounter(){
-        return new SimpleExceptionWindowCounter();
-    }
-
-    @Bean
-    public ExceptionHealthIndicator exceptionHealthIndicator(){
-        return new ExceptionHealthIndicator();
-    }
-
-
-    static class BizExceptionResolver implements ExceptionResolver {
-
-        @Override
-        public ErrorResult resolve(Exception ex) {
-            if(ex instanceof BizException && ((BizException) ex).getCustomMessage() != null){
-                ErrorResult optional = ((BizException) ex).getErrorResult();
-                return optional == null ? CommonResult.SERVICE_INTERNAL_ERROR : ErrorResult.create(optional.getCode(),((BizException) ex).getCustomMessage());
-            }
-            return null;
-        }
-
-        @Override
-        public boolean canResolve(Exception ex,HttpStatus httpstatus) {
-            if(ex instanceof BizException && ((BizException) ex).getCustomMessage() != null){
-                return true;
-            }
-            return false;
-        }
-    }
 }
