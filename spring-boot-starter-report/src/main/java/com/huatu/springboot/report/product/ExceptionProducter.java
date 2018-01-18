@@ -49,7 +49,7 @@ public class ExceptionProducter implements ExceptionResolver {
 
     @Override
     public boolean canResolve(Exception ex, HttpStatus httpStatus) {
-        if( httpStatus.is5xxServerError() ){
+        if(httpStatus != null && httpStatus.is5xxServerError() ){
             return true;
         }
         return false;
