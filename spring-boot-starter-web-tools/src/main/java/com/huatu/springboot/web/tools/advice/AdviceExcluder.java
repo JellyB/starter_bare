@@ -1,5 +1,6 @@
 package com.huatu.springboot.web.tools.advice;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.AntPathMatcher;
@@ -21,15 +22,20 @@ public class AdviceExcluder {
     private List<String> ignoreUrls = new ArrayList();
 
     public AdviceExcluder(){
+        this(null,null);
+    }
+
+    public AdviceExcluder(Set<String> ignoreClasses,List<String> ignoreUrls){
         ignoreUrls.add("/**/_monitor/**");//_monitor不能定于在mapping中
         ignoreClasses.add("org.springframework.hateoas.ResourceSupport");
         ignoreClasses.add("org.springframework.http.ResponseEntity");
         ignoreClasses.add("byte[]");
-    }
-
-    public AdviceExcluder(Set<String> ignoreClasses,List<String> ignoreUrls){
-        ignoreClasses.addAll(ignoreClasses);
-        ignoreUrls.addAll(ignoreUrls);
+        if(CollectionUtils.isNotEmpty(ignoreClasses)){
+            ignoreClasses.addAll(ignoreClasses);
+        }
+        if(CollectionUtils.isNotEmpty(ignoreUrls)){
+            ignoreUrls.addAll(ignoreUrls);
+        }
     }
 
     public boolean ignore(Object o,ServerHttpRequest serverHttpRequest){
