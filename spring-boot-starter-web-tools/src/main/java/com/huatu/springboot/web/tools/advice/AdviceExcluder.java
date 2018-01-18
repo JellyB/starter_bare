@@ -26,15 +26,15 @@ public class AdviceExcluder {
     }
 
     public AdviceExcluder(Set<String> ignoreClasses,List<String> ignoreUrls){
-        ignoreUrls.add("/**/_monitor/**");//_monitor不能定于在mapping中
-        ignoreClasses.add("org.springframework.hateoas.ResourceSupport");
-        ignoreClasses.add("org.springframework.http.ResponseEntity");
-        ignoreClasses.add("byte[]");
+        this.ignoreUrls.add("/**/_monitor/**");//_monitor不能定于在mapping中
+        this.ignoreClasses.add("org.springframework.hateoas.ResourceSupport");
+        this.ignoreClasses.add("org.springframework.http.ResponseEntity");
+        this.ignoreClasses.add("byte[]");
         if(CollectionUtils.isNotEmpty(ignoreClasses)){
-            ignoreClasses.addAll(ignoreClasses);
+            this.ignoreClasses.addAll(ignoreClasses);
         }
         if(CollectionUtils.isNotEmpty(ignoreUrls)){
-            ignoreUrls.addAll(ignoreUrls);
+            this.ignoreUrls.addAll(ignoreUrls);
         }
     }
 
