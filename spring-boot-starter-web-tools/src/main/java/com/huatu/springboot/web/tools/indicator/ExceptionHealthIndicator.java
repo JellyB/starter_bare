@@ -15,7 +15,8 @@ import java.util.Map;
  * @date 2018/1/16 12:02
  */
 public class ExceptionHealthIndicator extends AbstractHealthIndicator {
-    public static final int FREQUENCY_THRESHOLD = 2;//平均每秒两个即认为异常
+    public static final int FREQUENCY_THRESHOLD = 1;//平均每秒一个即认为异常
+
     @Autowired
     private ExceptionCounter exceptionCounter;
 

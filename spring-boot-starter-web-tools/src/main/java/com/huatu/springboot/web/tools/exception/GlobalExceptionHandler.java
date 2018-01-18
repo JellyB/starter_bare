@@ -186,7 +186,7 @@ public class GlobalExceptionHandler implements InitializingBean {
     @Bean
     @ConditionalOnMissingBean(ExceptionCounter.class)
     public ExceptionCounter exceptionCounter(){
-        return new SimpleExceptionWindowCounter(10);
+        return new SimpleExceptionWindowCounter();
     }
 
     @Bean

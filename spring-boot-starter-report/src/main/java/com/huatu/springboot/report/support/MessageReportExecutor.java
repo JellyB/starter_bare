@@ -7,5 +7,5 @@ import java.util.concurrent.Future;
  * @date 2018/1/11 16:15
  */
 public interface MessageReportExecutor {
-    Future<?> submit(Runnable runnable);
+    void execute(Runnable runnable);
 }

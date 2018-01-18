@@ -87,7 +87,7 @@ public class WebMessageProducter implements HandlerInterceptor {
             webReportMessage.setApplication(applicationContext.getEnvironment().getProperty("spring.application.name",""));
             webReportMessage.setHost(HostCacheUtil.getHost());
 
-            messageReportExecutor.submit(this.new ReportTask(webReportMessage,annotation.extraHandler()));
+            messageReportExecutor.execute(this.new ReportTask(webReportMessage,annotation.extraHandler()));
 
         }
 

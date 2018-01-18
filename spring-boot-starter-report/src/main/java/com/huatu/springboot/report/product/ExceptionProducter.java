@@ -39,7 +39,7 @@ public class ExceptionProducter implements ExceptionResolver {
         message.setApplication(environment.getProperty("spring.application.name",""));
         message.setHost(HostCacheUtil.getHost());
 
-        messageReportExecutor.submit(() -> {
+        messageReportExecutor.execute(() -> {
             rabbitReporter.report(message);
         });
 
