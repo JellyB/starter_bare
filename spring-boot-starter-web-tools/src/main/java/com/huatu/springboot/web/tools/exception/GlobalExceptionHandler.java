@@ -127,6 +127,7 @@ public class GlobalExceptionHandler implements InitializingBean {
     }
 
     public ModelAndView resolveAndHandle(HttpServletRequest request, HandlerMethod handlerMethod,Exception ex,ErrorResult optionalError,HttpStatus optionalStatus){
+        //其实在DefaultErrorAttributes已经有存储该异常，源码不熟悉，自己额外存储一次
         request.setAttribute(WebUtils.ERROR_EXCEPTION_ATTRIBUTE,ex);
 
         ErrorResult errorResult = null;
@@ -151,7 +152,7 @@ public class GlobalExceptionHandler implements InitializingBean {
         if(httpStatus != null && httpStatus.is5xxServerError()){
             exceptionCounter.add(ex);
         }
-        return errorHandler.handle(request,handlerMethod,errorResult,httpStatus,ex);
+        return errorHandler.handle(request,handlerMethod,errorResult,httpStatus);
     }
 
 

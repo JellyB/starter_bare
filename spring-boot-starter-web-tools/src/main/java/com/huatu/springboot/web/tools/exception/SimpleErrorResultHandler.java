@@ -40,7 +40,7 @@ public class SimpleErrorResultHandler implements ErrorResultHandler {
     private ErrorAttributes errorAttributes;
 
     @Override
-    public ModelAndView handle(HttpServletRequest request,HandlerMethod handlerMethod, Object errorResult, HttpStatus status,Exception ex) {
+    public ModelAndView handle(HttpServletRequest request,HandlerMethod handlerMethod, Object errorResult, HttpStatus status) {
         MediaType type = getProduceType(request,handlerMethod);
         ModelAndView modelAndView = produce(request,type,errorResult,status);
         if(modelAndView.getStatus() == null){
