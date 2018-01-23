@@ -1,9 +1,12 @@
 package com.huatu.springboot.report.core;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huatu.springboot.report.support.MessageReportExecutor;
 import com.huatu.springboot.report.support.RabbitReporter;
 import com.huatu.springboot.report.support.SimpleMessageReportExecutor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
@@ -23,6 +26,11 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureBefore({WebProducterAutoConfiguration.class,ExceptionProducterAutoConfiguration.class})
 @EnableConfigurationProperties(MessageReportProperties.class)
 public class ReportCoreAutoConfiguration {
+    @Bean
+    @ConditionalOnMissingBean(Jackson2JsonMessageConverter.class)
+    public Jackson2JsonMessageConverter jackson2JsonMessageConverter(@Autowired ObjectMapper objectMapper){
+        return new Jackson2JsonMessageConverter(objectMapper);
+    }
     @Bean
     @ConditionalOnMissingBean(MessageReportExecutor.class)
     public SimpleMessageReportExecutor simpleMessageReportExecutor(){
