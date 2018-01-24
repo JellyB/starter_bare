@@ -14,6 +14,8 @@ public class MessageReportProperties {
 
     @Data
     public static class WebProducterProperties{
+        //未使用
+        @Deprecated
         private boolean async = false;
         private String[] matches = new String[]{"/**"};
         private String[] excludes;
