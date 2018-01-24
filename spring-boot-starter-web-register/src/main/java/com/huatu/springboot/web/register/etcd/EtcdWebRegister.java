@@ -123,7 +123,7 @@ public class EtcdWebRegister implements WebRegister {
                 url = new URL(etcdServer+PATH_PRE+etcdServerNode);
                 connection = buildEtcdConnection(url,HttpMethod.DELETE);
                 InputStream in;
-                if (connection.getResponseCode() == 200 || connection.getResponseCode() == 201){
+                if (connection.getResponseCode() == 200 || connection.getResponseCode() == 201 || connection.getResponseCode() == 404){
                     success = true;
                     in = connection.getInputStream();
                 }else{
@@ -165,6 +165,8 @@ public class EtcdWebRegister implements WebRegister {
                             }
                         } catch (InterruptedException e) {
                             log.info("interrupt thread...");
+                        } catch (Exception e){
+                            log.error("catch an unknown exception,{}",e);
                         }
                     }
                 }
