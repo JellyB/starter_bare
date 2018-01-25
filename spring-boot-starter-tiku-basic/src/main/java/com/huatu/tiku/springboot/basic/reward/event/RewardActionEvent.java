@@ -11,12 +11,12 @@ import org.springframework.context.ApplicationEvent;
  */
 @Data
 public class RewardActionEvent extends ApplicationEvent {
-    private RewardAction.ActionType action;//动作名称
-    private String bizId;
-    private int gold;//赠送金币数量,0为不固定
-    private int experience;//经验值,0为不固定
-    private int uid;
-    private String uname;
+    private RewardAction.ActionType action;//动作名称,必填
+    private String bizId;//业务id，可不填，不填的情况下默认使用随机的md5，只能排除消息的重复，无法排除事件重复
+    private int gold;//赠送金币数量,0为不固定，推荐不填，不填默认使用动作定义中的值
+    private int experience;//经验值,0为不固定，推荐不填，不填默认使用动作定义中的值
+    private int uid;//必填，用户id
+    private String uname;//必填，用户名
 
     public RewardActionEvent(Object source) {
         super(source);
