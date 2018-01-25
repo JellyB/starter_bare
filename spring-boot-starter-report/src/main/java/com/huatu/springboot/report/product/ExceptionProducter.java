@@ -7,12 +7,16 @@ import com.huatu.springboot.report.support.RabbitReporter;
 import com.huatu.springboot.report.util.HostCacheUtil;
 import com.huatu.springboot.web.tools.exception.ExceptionResolver;
 import com.huatu.tiku.common.bean.report.ExceptionReportMessage;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.server.ServletServerHttpRequest;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author hanchao
@@ -28,11 +32,25 @@ public class ExceptionProducter implements ExceptionResolver {
     @Autowired
     private Environment environment;
     @Override
-    public ErrorResult resolve(Exception ex) {
+    public ErrorResult resolve(Exception ex, HttpServletRequest request) {
+
+        ServletServerHttpRequest nativeRequest = new ServletServerHttpRequest(request);
+        String body = "";
+        try {
+            body = IOUtils.toString(nativeRequest.getBody());
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
         ExceptionReportMessage message = ExceptionReportMessage.builder()
                 .message(ex.getMessage())
                 .exception(ex.getClass().getCanonicalName())
                 .stacktrace(ExceptionUtils.getStackTrace(ex))
+                .url(request.getRequestURI())
+                .urlParameters(request.getQueryString())
+                .method(request.getMethod())
+                .body(body)
+                .requestHeaders(nativeRequest.getHeaders())
                 .build();
 
         message.setTimestamp(TimestampUtil.currentTimeStamp());

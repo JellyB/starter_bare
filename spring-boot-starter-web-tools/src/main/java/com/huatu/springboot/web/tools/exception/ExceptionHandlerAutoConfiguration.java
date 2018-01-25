@@ -9,6 +9,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @author hanchao
  * @date 2018/1/18 21:34
@@ -46,7 +48,7 @@ public class ExceptionHandlerAutoConfiguration {
     static class BizExceptionResolver implements ExceptionResolver {
 
         @Override
-        public ErrorResult resolve(Exception ex) {
+        public ErrorResult resolve(Exception ex, HttpServletRequest request) {
             if(ex instanceof BizException && ((BizException) ex).getCustomMessage() != null){
                 ErrorResult optional = ((BizException) ex).getErrorResult();
                 return optional == null ? CommonResult.SERVICE_INTERNAL_ERROR : ErrorResult.create(optional.getCode(),((BizException) ex).getCustomMessage());

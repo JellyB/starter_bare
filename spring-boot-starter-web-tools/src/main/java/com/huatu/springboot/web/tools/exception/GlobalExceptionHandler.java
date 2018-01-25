@@ -135,8 +135,12 @@ public class GlobalExceptionHandler implements InitializingBean {
         if(needResolve){
             for (ExceptionResolver resolver : exceptionResolvers) {
                 if(resolver.canResolve(ex,optionalStatus)){
-                    errorResult = resolver.resolve(ex);
-                    httpStatus = resolver.status(ex);
+                    try {
+                        errorResult = resolver.resolve(ex,request);
+                        httpStatus = resolver.status(ex);
+                    } catch(Exception e){
+                        log.error("handler throw an exception!!!",e);
+                    }
                     break;
                 }
             }

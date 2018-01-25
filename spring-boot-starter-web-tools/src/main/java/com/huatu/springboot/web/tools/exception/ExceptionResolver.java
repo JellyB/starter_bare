@@ -3,6 +3,8 @@ package com.huatu.springboot.web.tools.exception;
 import com.huatu.common.ErrorResult;
 import org.springframework.http.HttpStatus;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 将ex转换为errorresult
  * 不要直接处理基类异常，会导致所有的默认子类异常处理失效
@@ -15,7 +17,7 @@ public interface ExceptionResolver {
      * @param ex
      * @return
      */
-    ErrorResult resolve(Exception ex);
+    ErrorResult resolve(Exception ex, HttpServletRequest request);
 
     /**
      * 是否可以处理
