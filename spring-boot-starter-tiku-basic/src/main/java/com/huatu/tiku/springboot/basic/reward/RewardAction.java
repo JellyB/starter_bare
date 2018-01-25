@@ -2,23 +2,20 @@ package com.huatu.tiku.springboot.basic.reward;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import lombok.ToString;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
+ *
  * @author hanchao
  * @date 2017/10/12 15:48
  */
 @ToString
 public class RewardAction implements Serializable{
     private static final long serialVersionUID = 1L;
-
     private ActionType action;//动作名称
     private Strategy strategy;//赠送策略
     private int timesLimit;//最多多少次,策略优先
@@ -85,7 +82,9 @@ public class RewardAction implements Serializable{
         EVALUATE("完成课程评价"),//评价课程
         SHARE("分享成功"),//分享
         CHARGE("充值"),//充值
-        ACTIVTY("");//运营活动
+        ACTIVTY(""),//运营活动
+        SL_CORR_SINGLE("申论单题修改"),
+        SL_CORR_SET("申论套题修改");
         private String bizName;
         ActionType(String bizName){
             this.bizName = bizName;
@@ -94,6 +93,7 @@ public class RewardAction implements Serializable{
             return bizName;
         }
     }
+
 
 
     public static void main(String[] args) throws IOException {
@@ -117,17 +117,9 @@ public class RewardAction implements Serializable{
         list.add(new RewardAction(ActionType.SHARE,Strategy.DAILY,2,10,10));
         list.add(new RewardAction(ActionType.CHARGE,Strategy.NONE,0,0,0));
         list.add(new RewardAction(ActionType.ACTIVTY,Strategy.NONE,0,0,0));
-        Map<String,Object> map = new LinkedHashMap<>();
-        for (RewardAction o : list) {
-            if(o.getStrategy() == Strategy.DAILY){
-                Map m = Maps.newHashMap();
-                m.put("time","0");
-                m.put("limit","1");
-                m.put("over",false);
-                map.put(o.getAction().name(),m);
-            }
-        }
+        list.add(new RewardAction(ActionType.SL_CORR_SINGLE,Strategy.DAILY,1,10,10));
+        list.add(new RewardAction(ActionType.SL_CORR_SET,Strategy.DAILY,1,20,20));
 
-        System.out.println(JSON.toJSONString(map));
+        System.out.println(JSON.toJSONString(list));
     }
 }
