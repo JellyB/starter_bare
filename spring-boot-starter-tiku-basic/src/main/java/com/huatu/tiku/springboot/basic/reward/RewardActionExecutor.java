@@ -17,6 +17,7 @@ import java.util.List;
  * @date 2017/10/16 13:39
  */
 @Slf4j
+@Deprecated
 public class RewardActionExecutor implements InitializingBean {
     @Autowired(required = false)
     private List<RewardActionEventHandler> rewardActionEventHandlers;
