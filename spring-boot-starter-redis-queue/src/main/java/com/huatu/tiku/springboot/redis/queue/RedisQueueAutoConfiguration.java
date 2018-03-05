@@ -1,7 +1,7 @@
 package com.huatu.tiku.springboot.redis.queue;
 
 import com.huatu.tiku.springboot.redis.queue.core.QueueListenerContainer;
-import com.huatu.tiku.springboot.redis.queue.core.RedisQueueTempalte;
+import com.huatu.tiku.springboot.redis.queue.core.RedisQueueTemplate;
 import com.huatu.tiku.springboot.redis.queue.core.SimpleRedisQueueListenerContainer;
 import com.huatu.tiku.springboot.redis.queue.support.QueueRedisProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +40,8 @@ public class RedisQueueAutoConfiguration {
 
 
     @Bean
-    public RedisQueueTempalte redisQueueTempalte(@Autowired @Qualifier("queueJedisPool") JedisPool jedisPool){
-        return new RedisQueueTempalte(jedisPool);
+    public RedisQueueTemplate redisQueueTempalte(@Autowired @Qualifier("queueJedisPool") JedisPool jedisPool){
+        return new RedisQueueTemplate(jedisPool);
     }
 
     @Bean

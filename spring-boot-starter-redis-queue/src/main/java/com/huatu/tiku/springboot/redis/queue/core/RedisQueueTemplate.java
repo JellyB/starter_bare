@@ -11,11 +11,11 @@ import java.util.function.Function;
  * @author hanchao
  * @date 2017/10/31 16:46
  */
-public class RedisQueueTempalte {
+public class RedisQueueTemplate {
     private JedisPool jedisPool;
     private QueueJedisTemplate jedisTemplate;
 
-    public RedisQueueTempalte(JedisPool jedisPool){
+    public RedisQueueTemplate(JedisPool jedisPool){
         this.jedisPool = jedisPool;
         this.jedisTemplate = new QueueJedisTemplate(jedisPool);
     }
