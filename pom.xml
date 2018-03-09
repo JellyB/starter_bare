@@ -27,6 +27,7 @@
         <module>spring-boot-starter-degrade</module>
         <module>spring-boot-starter-redis-queue</module>
         <module>spring-boot-starter-report</module>
+        <module>spring-boot-starter-version-mapping</module>
     </modules>
 
 </project>
