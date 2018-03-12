@@ -3,6 +3,7 @@ package com.huatu.springboot.web.version.mapping.core;
 import com.huatu.springboot.web.version.mapping.annotation.ApiVersion;
 import com.huatu.springboot.web.version.mapping.annotation.ClientVersion;
 import com.huatu.springboot.web.version.mapping.condition.ClientVersionRequestCondition;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.web.servlet.mvc.condition.RequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -27,11 +28,20 @@ public class CustomRequestMappingHandlerMapping extends RequestMappingHandlerMap
         return mappinginfo;
     }
 
+    @Override
+    protected RequestCondition<?> getCustomTypeCondition(Class<?> handlerType) {
+        ClientVersion clientVersion = AnnotatedElementUtils.findMergedAnnotation(handlerType, ClientVersion.class);
+        return createRequestCondtion(clientVersion);
+    }
 
     //重新定义clientversion的条件匹配
     @Override
     protected RequestCondition<?> getCustomMethodCondition(Method method) {
-        ClientVersion clientVersion = method.getAnnotation(ClientVersion.class);
+        ClientVersion clientVersion = AnnotatedElementUtils.findMergedAnnotation(method, ClientVersion.class);
+        return createRequestCondtion(clientVersion);
+    }
+
+    private RequestCondition<?> createRequestCondtion(ClientVersion clientVersion){
         if(clientVersion == null){
             return null;
         }
@@ -44,15 +54,15 @@ public class CustomRequestMappingHandlerMapping extends RequestMappingHandlerMap
         return null;
     }
 
-
     private RequestMappingInfo getApiVersionMappingInfo(Method method,Class<?> handlerType){
         //优先查找method
         ApiVersion apiVersion = AnnotatedElementUtils.findMergedAnnotation(method, ApiVersion.class);
-        if(apiVersion == null){
+        if(apiVersion == null || StringUtils.isBlank(apiVersion.value())){
             apiVersion = AnnotatedElementUtils.findMergedAnnotation(handlerType,ApiVersion.class);
         }
-        return apiVersion == null ? null : RequestMappingInfo
+        return apiVersion == null || StringUtils.isBlank(apiVersion.value()) ? null : RequestMappingInfo
                 .paths(apiVersion.value())
                 .build();
     }
 }
+
