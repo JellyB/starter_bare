@@ -2,7 +2,6 @@ package com.huatu.tiku.springboot.users.support;
 
 import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.exceptions.JedisException;
 import redis.clients.util.Pool;
 
 import java.util.Map;
@@ -27,9 +26,11 @@ public class SessionRedisTemplate {
             return callback.doInJedis(jedis);
         } catch(Exception e){
             log.error("execute jedis command error... ",e);
-            throw new JedisException(e);
+            throw e;
         }finally {
-            jedis.close();
+            if(jedis != null){
+                jedis.close();
+            }
         }
     }
 

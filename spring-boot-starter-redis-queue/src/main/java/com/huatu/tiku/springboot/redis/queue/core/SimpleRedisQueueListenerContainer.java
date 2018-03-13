@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.exceptions.JedisException;
 
 import javax.annotation.PreDestroy;
 import java.util.Collection;
@@ -100,16 +101,26 @@ public class SimpleRedisQueueListenerContainer implements QueueListenerContainer
         @Override
         public void run() {
             Jedis jedis = null;
-            while (running && !Thread.currentThread().isInterrupted()) {
-                try {
-                    jedis = JEDIS_HOLDER.get();
-                    listen(jedis);
-                } catch (Exception e) {
-                    JEDIS_HOLDER.remove();
-                    if (jedis != null) {
-                        jedis.close();
+            try {
+                while (running && !Thread.currentThread().isInterrupted()) {
+                    try {
+                        jedis = JEDIS_HOLDER.get();
+                        listen(jedis);
+                    } catch (JedisException e) {
+                        e.printStackTrace();
+                        try {
+                            Thread.sleep(1000);
+                            JEDIS_HOLDER.set(jedisPool.getResource());
+                            if(jedis != null){
+                                jedis.close();
+                            }
+                        } catch(Exception ie){
+                            e.printStackTrace();
+                        }
                     }
                 }
+            } catch(InterruptedException e){
+                log.warn("listener interrupted...");
             }
             if (jedis != null) {
                 jedis.close();
