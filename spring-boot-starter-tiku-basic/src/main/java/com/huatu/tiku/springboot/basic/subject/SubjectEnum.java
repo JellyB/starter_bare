@@ -12,8 +12,10 @@ public enum SubjectEnum {
     JINRONG(200100002,"金融",1005),
     YILIAO(200100000,"医疗",1004),
     GONGJIANFA(200100047,"公检法",1002),
-    QITA(200100046,"其他",1006);
-
+    QITA(200100046,"其他",1006),
+    LINXUAN(41,"遴选",1008),
+    JUANZHUAN(42,"军转",1009),
+    GUOJIADIANWANG(43,"国家电网",1010);
 
     private final int code;//最顶级的id
     private final String meaning;//这里定义必须和网校一致，因为网校需要name来获取
