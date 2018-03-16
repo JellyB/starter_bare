@@ -121,7 +121,10 @@ public class WebMessageProducter implements HandlerInterceptor {
                     e.printStackTrace();
                 }
             }
-            rabbitReporter.report(message);
+            //extra方法如果将消息设置未null，则不发送此消息了
+            if(message != null){
+                rabbitReporter.report(message);
+            }
         }
     }
 
