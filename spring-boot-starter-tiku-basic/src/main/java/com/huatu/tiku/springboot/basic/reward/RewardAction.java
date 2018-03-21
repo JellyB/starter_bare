@@ -113,7 +113,7 @@ public class RewardAction implements Serializable{
         list.add(new RewardAction(ActionType.WATCH_FREE,Strategy.DAILY,1,10,10));
         list.add(new RewardAction(ActionType.WATCH_PAY,Strategy.DAILY,1,10,10));
         list.add(new RewardAction(ActionType.EVALUATE_AFTER,Strategy.DAILY,1,30,30));
-        list.add(new RewardAction(ActionType.EVALUATE,Strategy.DAILY,1,10,30));
+        list.add(new RewardAction(ActionType.EVALUATE,Strategy.DAILY,1,10,10));
         list.add(new RewardAction(ActionType.SHARE,Strategy.DAILY,2,10,10));
         list.add(new RewardAction(ActionType.CHARGE,Strategy.NONE,0,0,0));
         list.add(new RewardAction(ActionType.ACTIVTY,Strategy.NONE,0,0,0));
