@@ -63,7 +63,7 @@ public class SubjectService implements ConfigSubscriber {
 
     @Override
     public String key() {
-        return "subjects";
+        return "tiku.basic.subjects";
     }
 
     @Override

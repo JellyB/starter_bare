@@ -82,7 +82,7 @@ public class RewardActionService implements ConfigSubscriber {
 
     @Override
     public String key() {
-        return "reward-actions";
+        return "tiku.basic.reward-actions";
     }
 
     @Override
