@@ -8,11 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.method.annotation.RequestHeaderMethodArgumentResolver;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import redis.clients.jedis.JedisSentinelPool;
+
+import java.util.List;
 
 /**
  * 使用需要引入公共namespace,同时添加importusersessions注解
@@ -46,4 +51,15 @@ public class UsersAutoConfiguration {
         return new TokenMethodArgumentResolver(beanFactory,userSessionService);
     }
 
+    @Configuration
+    @ConditionalOnWebApplication
+    public static class ArgumentResolverMvcConfig extends WebMvcConfigurerAdapter{
+        @Autowired
+        private TokenMethodArgumentResolver tokenMethodArgumentResolver;
+        @Override
+        public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+            argumentResolvers.add(tokenMethodArgumentResolver);//用户session参数装配
+            super.addArgumentResolvers(argumentResolvers);
+        }
+    }
 }
