@@ -107,7 +107,7 @@ public class SimpleRedisQueueListenerContainer implements QueueListenerContainer
                         jedis = JEDIS_HOLDER.get();
                         listen(jedis);
                     } catch (JedisException e) {
-                        e.printStackTrace();
+                        log.error("",e);
                         try {
                             Thread.sleep(1000);
                             JEDIS_HOLDER.set(jedisPool.getResource());
@@ -115,7 +115,7 @@ public class SimpleRedisQueueListenerContainer implements QueueListenerContainer
                                 jedis.close();
                             }
                         } catch(Exception ie){
-                            e.printStackTrace();
+                            log.error("return jedis error:",e);
                         }
                     }
                 }
