@@ -9,7 +9,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.exceptions.JedisException;
 
 import javax.annotation.PreDestroy;
 import java.util.Collection;
@@ -26,7 +25,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2017/10/31 16:45
  */
 @Slf4j
-public class SimpleRedisQueueListenerContainer implements QueueListenerContainer,ApplicationContextAware,InitializingBean {
+public class SimpleRedisQueueListenerContainer implements QueueListenerContainer, ApplicationContextAware, InitializingBean {
     private volatile boolean running = true;
     private final ThreadLocal<Jedis> JEDIS_HOLDER;
     private ApplicationContext applicationContext;
@@ -67,7 +66,7 @@ public class SimpleRedisQueueListenerContainer implements QueueListenerContainer
             for (RedisQueueListener listener : listeners) {
                 removeListener(listener);
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -80,7 +79,7 @@ public class SimpleRedisQueueListenerContainer implements QueueListenerContainer
     @Override
     public void afterPropertiesSet() throws Exception {
         Collection<RedisQueueListener> listenerCollection = this.applicationContext.getBeansOfType(RedisQueueListener.class).values();
-        if(CollectionUtils.isNotEmpty(listenerCollection)){
+        if (CollectionUtils.isNotEmpty(listenerCollection)) {
             for (RedisQueueListener redisQueueListener : listenerCollection) {
                 addListener(redisQueueListener);
             }
@@ -106,20 +105,22 @@ public class SimpleRedisQueueListenerContainer implements QueueListenerContainer
                     try {
                         jedis = JEDIS_HOLDER.get();
                         listen(jedis);
-                    } catch (JedisException e) {
-                        log.error("",e);
+                    } catch (InterruptedException e) {
+                        throw e;
+                    } catch (Exception e) {
+                        log.error("", e);
                         try {
                             Thread.sleep(1000);
                             JEDIS_HOLDER.set(jedisPool.getResource());
-                            if(jedis != null){
+                            if (jedis != null) {
                                 jedis.close();
                             }
-                        } catch(Exception ie){
-                            log.error("return jedis error:",e);
+                        } catch (Exception ie) {
+                            log.error("return jedis error:", e);
                         }
                     }
                 }
-            } catch(InterruptedException e){
+            } catch (InterruptedException e) {
                 log.warn("listener interrupted...");
             }
             if (jedis != null) {
@@ -134,9 +135,9 @@ public class SimpleRedisQueueListenerContainer implements QueueListenerContainer
             } else {
                 try {
                     listener.consume(message);
-                } catch (RejectException e){
+                } catch (RejectException e) {
                     //do nothing
-                } catch(Exception e){
+                } catch (Exception e) {
                     //should drop the message,or put it to another queue
                 }
             }
