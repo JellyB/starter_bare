@@ -2,6 +2,7 @@ package com.huatu.springboot.report.product;
 
 import com.huatu.common.utils.date.TimestampUtil;
 import com.huatu.springboot.report.annotation.WebReport;
+import com.huatu.springboot.report.product.extend.ResponseResultHolder;
 import com.huatu.springboot.report.support.MessageReportExecutor;
 import com.huatu.springboot.report.support.RabbitReporter;
 import com.huatu.springboot.report.util.HostCacheUtil;
@@ -86,12 +87,14 @@ public class WebMessageProducter implements HandlerInterceptor {
                 webReportMessage.setTimestamp(TimestampUtil.currentTimeStamp());
                 webReportMessage.setApplication(applicationContext.getEnvironment().getProperty("spring.application.name",""));
                 webReportMessage.setHost(HostCacheUtil.getHost());
+                webReportMessage.setReturnValue(ResponseResultHolder.get());
 
                 messageReportExecutor.execute(this.new ReportTask(webReportMessage,annotation.extraHandler()));
 
             }
         } finally {
             UserSessionHolder.clear();
+            ResponseResultHolder.clear();
         }
 
     }

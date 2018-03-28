@@ -13,4 +13,5 @@ import java.lang.annotation.*;
 public @interface WebReport {
     String value() default "";
     Class<?> extraHandler() default Object.class;
+    boolean holdResult() default false;
 }

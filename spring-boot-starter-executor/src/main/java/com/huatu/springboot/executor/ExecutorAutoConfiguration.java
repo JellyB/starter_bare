@@ -18,7 +18,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  * @date 2017/9/12 20:46
  */
 @ConditionalOnClass(ThreadPoolTaskExecutor.class)
-@ConditionalOnProperty(value = "htonline.executor.enabled", havingValue = "true")
 @Configuration
 @EnableApolloConfig("htonline.executor")
 @EnableConfigurationProperties(ExecutorProperties.class)
@@ -30,6 +29,7 @@ public class ExecutorAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnProperty(value = "htonline.executor.enabled", havingValue = "true")
     public ThreadPoolTaskExecutor coreThreadPool() {
         ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
         threadPoolTaskExecutor.setCorePoolSize(executorProperties.getCorePoolSize());
