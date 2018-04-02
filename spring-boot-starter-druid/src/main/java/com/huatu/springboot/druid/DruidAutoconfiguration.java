@@ -77,7 +77,7 @@ public class DruidAutoconfiguration {
     }
 
     @Configuration
-    @ConditionalOnProperty(prefix = "spring.druid.monitor",havingValue = "enabled",value = "enabled",matchIfMissing = false)
+    @ConditionalOnProperty(prefix = "spring.datasource.druid.monitor",havingValue = "enabled",value = "enabled",matchIfMissing = false)
     protected class DruidMonitorAutoConfiguration {
         @Bean
         public ServletRegistrationBean druidStatViewServlet(){
