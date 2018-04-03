@@ -1,7 +1,9 @@
 package com.huatu.springboot.report.core;
 
 import com.huatu.springboot.report.product.WebMessageProducter;
+import com.huatu.tiku.springboot.users.service.UserSessionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +18,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  */
 @Configuration
 @ConditionalOnWebApplication
+@ConditionalOnClass(UserSessionService.class)
 @ConditionalOnProperty(name = "enable",prefix = "tiku.report.web",matchIfMissing = true)
 public class WebProducterAutoConfiguration {
 
