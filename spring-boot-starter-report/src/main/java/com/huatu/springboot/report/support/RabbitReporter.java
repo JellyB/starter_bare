@@ -1,6 +1,8 @@
 package com.huatu.springboot.report.support;
 
+import com.huatu.springboot.report.core.RabbitMqReportQueueEnum;
 import com.huatu.tiku.common.bean.report.ReportMessage;
+import com.huatu.tiku.common.bean.report.WebReportMessage;
 import com.huatu.tiku.common.consts.RabbitConsts;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -20,7 +22,18 @@ public class RabbitReporter implements MessageReporter {
     @Override
     public void report(ReportMessage message) {
         //直接使用json发送，避免不同序列化导致的问题
-        rabbitTemplate.send(RabbitConsts.QUEUE_REPORT,jackson2JsonMessageConverter.toMessage(message,new MessageProperties()));
+        rabbitTemplate.send(RabbitConsts.QUEUE_REPORT, jackson2JsonMessageConverter.toMessage(message, new MessageProperties()));
+    }
+
+    public void report(RabbitMqReportQueueEnum[] rabbitMqReportQueue, ReportMessage message) {
+        for (RabbitMqReportQueueEnum queueEnum : rabbitMqReportQueue) {
+            //当前上报的数据是否只上报 自定义数据,减少IO 流
+            boolean simpleData = queueEnum.isSimpleData() && message instanceof WebReportMessage;
+            rabbitTemplate.send(
+                    queueEnum.getQueueName(),
+                    jackson2JsonMessageConverter.toMessage(simpleData ? ((WebReportMessage) message).getExtraData() : message, new MessageProperties())
+            );
+        }
     }
 
 }

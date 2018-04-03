@@ -2,6 +2,7 @@ package com.huatu.springboot.report.product;
 
 import com.huatu.common.utils.date.TimestampUtil;
 import com.huatu.springboot.report.annotation.WebReport;
+import com.huatu.springboot.report.core.RabbitMqReportQueueEnum;
 import com.huatu.springboot.report.product.extend.ResponseResultHolder;
 import com.huatu.springboot.report.support.MessageReportExecutor;
 import com.huatu.springboot.report.support.RabbitReporter;
@@ -89,7 +90,9 @@ public class WebMessageProducter implements HandlerInterceptor {
                 webReportMessage.setHost(HostCacheUtil.getHost());
                 webReportMessage.setReturnValue(ResponseResultHolder.get());
 
-                messageReportExecutor.execute(this.new ReportTask(webReportMessage,annotation.extraHandler()));
+                //获取队列名称
+                RabbitMqReportQueueEnum[] queueNameEnum = annotation.queueName();
+                messageReportExecutor.execute(this.new ReportTask(queueNameEnum,webReportMessage,annotation.extraHandler()));
 
             }
         } finally {
@@ -101,12 +104,19 @@ public class WebMessageProducter implements HandlerInterceptor {
 
 
     protected class ReportTask implements Runnable {
+        private RabbitMqReportQueueEnum[] queueName;//队列名称
         private WebReportMessage message;
         private Class<?> handlerClass;
 
         public ReportTask(WebReportMessage message, Class<?> handler) {
             this.message = message;
             this.handlerClass = handler;
+        }
+
+        public ReportTask(RabbitMqReportQueueEnum[] queueName, WebReportMessage message, Class<?> handlerClass) {
+            this.queueName = queueName;
+            this.message = message;
+            this.handlerClass = handlerClass;
         }
 
         @Override
@@ -126,7 +136,7 @@ public class WebMessageProducter implements HandlerInterceptor {
             }
             //extra方法如果将消息设置未null，则不发送此消息了
             if(message != null){
-                rabbitReporter.report(message);
+                rabbitReporter.report(queueName,message);
             }
         }
     }
