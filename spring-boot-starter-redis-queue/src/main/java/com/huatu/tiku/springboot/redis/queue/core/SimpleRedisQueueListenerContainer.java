@@ -139,6 +139,7 @@ public class SimpleRedisQueueListenerContainer implements QueueListenerContainer
                     //do nothing
                 } catch (Exception e) {
                     //should drop the message,or put it to another queue
+                    log.error("",e);
                 }
             }
         }
