@@ -25,6 +25,10 @@ public class RabbitReporter implements MessageReporter {
         rabbitTemplate.send(RabbitConsts.QUEUE_REPORT, jackson2JsonMessageConverter.toMessage(message, new MessageProperties()));
     }
 
+    public void report(String queueName,Object message){
+        rabbitTemplate.send(queueName, jackson2JsonMessageConverter.toMessage(message, new MessageProperties()));
+    }
+
     public void report(RabbitMqReportQueueEnum[] rabbitMqReportQueue, ReportMessage message) {
         for (RabbitMqReportQueueEnum queueEnum : rabbitMqReportQueue) {
             //当前上报的数据是否只上报 自定义数据,减少IO 流
