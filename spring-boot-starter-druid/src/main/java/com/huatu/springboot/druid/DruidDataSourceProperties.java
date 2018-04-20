@@ -24,8 +24,13 @@ public class DruidDataSourceProperties {
      */
     private String password;
 
+    /**
+     * 是否只读库
+     */
     private boolean readonly;
-
+    /**
+     * 权重，方便负载均衡使用
+     */
     private int weight;
 
 
