@@ -3,7 +3,7 @@ package com.huatu.springboot.druid;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.Properties;
+import java.util.Map;
 
 /**
  * @author hanchao
@@ -11,25 +11,9 @@ import java.util.Properties;
  */
 @ConfigurationProperties(prefix = "spring.datasource.druid")
 @Data
-public class DruidProperties {
-    private Integer initialSize;
-    private Integer minIdle;
-    private Integer maxActive;
-    private Integer maxWait;
-    private Integer timeBetweenEvictionRunsMillis;
-    private Integer minEvictableIdleTimeMillis;
-
-    private boolean testWhileIdle = true;
-    private boolean testOnBorrow = false;
-    private boolean testOnReturn = false;
-    private boolean poolPreparedStatements = true;
-    private Integer psCacheSize;
-    private Integer maxPoolPreparedStatementPerConnectionSize;
-    private String filters;
-    private String validationQuery;
-    private Properties connectionProperties;
+public class DruidProperties extends DruidDataSourceProperties {
     private MonitorProperties monitor = new MonitorProperties();
-
+    private Map<String,DruidDataSourceProperties> datasources;
 
     @Data
     public static class MonitorProperties {
@@ -42,4 +26,5 @@ public class DruidProperties {
         private String exclusions;
         private String resetEnable;
     }
+
 }
