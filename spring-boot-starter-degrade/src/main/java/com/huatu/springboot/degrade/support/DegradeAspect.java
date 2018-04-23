@@ -4,6 +4,7 @@ import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.spring.annotation.ApolloConfig;
 import com.huatu.springboot.degrade.core.Degrade;
 import com.huatu.springboot.degrade.core.DegradeConsts;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -21,6 +22,7 @@ import java.lang.reflect.Method;
  */
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @Aspect
+@Slf4j
 public class DegradeAspect {
     @ApolloConfig("degrade")
     private Config config;
@@ -38,7 +40,13 @@ public class DegradeAspect {
         MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
         Method method = methodSignature.getMethod();
         Degrade degrade = method.getAnnotation(Degrade.class);
-        String switchStatus = config.getProperty(degrade.key(), DegradeConsts.CLOSED);
+        String switchStatus = null;
+        try {
+            switchStatus = config.getProperty(degrade.key(), DegradeConsts.CLOSED);
+        } catch(Exception e){
+            log.error("get config from apollo cause an error.",e);
+            e.printStackTrace();
+        }
         if (! DegradeConsts.OPEN.equals(switchStatus)) {
             return pjp.proceed();
         }
