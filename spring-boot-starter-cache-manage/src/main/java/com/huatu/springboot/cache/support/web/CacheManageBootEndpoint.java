@@ -104,9 +104,9 @@ public class CacheManageBootEndpoint  implements MvcEndpoint {
         if(cachedInfo == null){
             return CommonResult.RESOURCE_NOT_FOUND;
         }
-        if(cachedInfo.getSourceType() == Cached.DataScourseType.GETINSIDE || cachedInfo.getSourceType() == Cached.DataScourseType.DELINSIDE){
-            return CommonResult.FORBIDDEN;
-        }
+//        if(cachedInfo.getSourceType() == Cached.DataScourseType.GETINSIDE || cachedInfo.getSourceType() == Cached.DataScourseType.DELINSIDE){
+//            return CommonResult.FORBIDDEN;
+//        }
 
         Object execute = executeRequest(params, cachedInfo);
         Map result = HashMapBuilder.newBuilder()
