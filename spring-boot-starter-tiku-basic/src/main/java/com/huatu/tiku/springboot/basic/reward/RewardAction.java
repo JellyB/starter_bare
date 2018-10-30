@@ -83,8 +83,10 @@ public class RewardAction implements Serializable{
         SHARE("分享成功"),//分享
         CHARGE("充值"),//充值
         ACTIVTY(""),//运营活动
-        SL_CORR_SINGLE("申论单题修改"),
-        SL_CORR_SET("申论套题修改");
+        SL_CORR_SINGLE("申论单题批改"),
+        SL_CORR_STANDARD("申论标准答案批改"),
+        SL_CORR_ARGUMENT("申论议论文批改"),
+        SL_CORR_SET("申论套题批改");
         private String bizName;
         ActionType(String bizName){
             this.bizName = bizName;
@@ -119,6 +121,8 @@ public class RewardAction implements Serializable{
         list.add(new RewardAction(ActionType.ACTIVTY,Strategy.NONE,0,0,0));
         list.add(new RewardAction(ActionType.SL_CORR_SINGLE,Strategy.DAILY,1,10,10));
         list.add(new RewardAction(ActionType.SL_CORR_SET,Strategy.DAILY,1,20,20));
+        list.add(new RewardAction(ActionType.SL_CORR_STANDARD,Strategy.DAILY,1,10,10));
+        list.add(new RewardAction(ActionType.SL_CORR_ARGUMENT,Strategy.DAILY,1,10,10));
 
         System.out.println(JSON.toJSONString(list));
     }
