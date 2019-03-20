@@ -9,12 +9,11 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- *
  * @author hanchao
  * @date 2017/10/12 15:48
  */
 @ToString
-public class RewardAction implements Serializable{
+public class RewardAction implements Serializable {
     private static final long serialVersionUID = 1L;
     private ActionType action;//动作名称
     private Strategy strategy;//赠送策略
@@ -50,7 +49,7 @@ public class RewardAction implements Serializable{
         this.experience = experience;
     }
 
-    public RewardAction(){
+    public RewardAction() {
 
     }
 
@@ -86,43 +85,47 @@ public class RewardAction implements Serializable{
         SL_CORR_SINGLE("申论单题批改"),
         SL_CORR_STANDARD("申论标准答案批改"),
         SL_CORR_ARGUMENT("申论议论文批改"),
-        SL_CORR_SET("申论套题批改");
+        SL_CORR_SET("申论套题批改"),
+        COURSE_PRACTICE_RIGHT("随堂练赠送金币"),
+        COURSE_AFTER_PRACTICE_RIGHT("课后练习赠送金币");
+
         private String bizName;
-        ActionType(String bizName){
+
+        ActionType(String bizName) {
             this.bizName = bizName;
         }
+
         public String getBizName() {
             return bizName;
         }
     }
 
 
-
     public static void main(String[] args) throws IOException {
         List<RewardAction> list = Lists.newArrayList();
-        list.add(new RewardAction(ActionType.REGISTER,Strategy.ONCE,1,50,50));
-        list.add(new RewardAction(ActionType.ATTENDANCE,Strategy.DAILY,1,0,0));
-        list.add(new RewardAction(ActionType.MATCH_ENROLL,Strategy.WEEKELY,1,10,10));
-        list.add(new RewardAction(ActionType.MATCH_ENTER,Strategy.WEEKELY,1,20,20));
-        list.add(new RewardAction(ActionType.MATCH_PRIZE,Strategy.WEEKELY,1,50,50));
-        list.add(new RewardAction(ActionType.ARENA_WIN,Strategy.DAILY,1,20,20));
-        list.add(new RewardAction(ActionType.TRAIN_DAILY,Strategy.DAILY,1,20,20));
-        list.add(new RewardAction(ActionType.TRAIN_SPECIAL,Strategy.DAILY,1,10,10));
-        list.add(new RewardAction(ActionType.TRAIN_INTELLIGENCE,Strategy.DAILY,1,10,10));
-        list.add(new RewardAction(ActionType.TRAIN_MISTAKE,Strategy.DAILY,1,10,10));
-        list.add(new RewardAction(ActionType.ANSWER_CORRECTION,Strategy.WEEKELY,5,10,10));
-        list.add(new RewardAction(ActionType.COURSE_BUY,Strategy.NONE,0,0,0));
-        list.add(new RewardAction(ActionType.WATCH_FREE,Strategy.DAILY,1,10,10));
-        list.add(new RewardAction(ActionType.WATCH_PAY,Strategy.DAILY,1,20,20));
-        list.add(new RewardAction(ActionType.EVALUATE_AFTER,Strategy.DAILY,1,30,30));
-        list.add(new RewardAction(ActionType.EVALUATE,Strategy.DAILY,1,10,10));
-        list.add(new RewardAction(ActionType.SHARE,Strategy.DAILY,2,10,10));
-        list.add(new RewardAction(ActionType.CHARGE,Strategy.NONE,0,0,0));
-        list.add(new RewardAction(ActionType.ACTIVTY,Strategy.NONE,0,0,0));
-        list.add(new RewardAction(ActionType.SL_CORR_SINGLE,Strategy.DAILY,1,10,10));
-        list.add(new RewardAction(ActionType.SL_CORR_SET,Strategy.DAILY,1,20,20));
-        list.add(new RewardAction(ActionType.SL_CORR_STANDARD,Strategy.DAILY,1,10,10));
-        list.add(new RewardAction(ActionType.SL_CORR_ARGUMENT,Strategy.DAILY,1,10,10));
+        list.add(new RewardAction(ActionType.REGISTER, Strategy.ONCE, 1, 50, 50));
+        list.add(new RewardAction(ActionType.ATTENDANCE, Strategy.DAILY, 1, 0, 0));
+        list.add(new RewardAction(ActionType.MATCH_ENROLL, Strategy.WEEKELY, 1, 10, 10));
+        list.add(new RewardAction(ActionType.MATCH_ENTER, Strategy.WEEKELY, 1, 20, 20));
+        list.add(new RewardAction(ActionType.MATCH_PRIZE, Strategy.WEEKELY, 1, 50, 50));
+        list.add(new RewardAction(ActionType.ARENA_WIN, Strategy.DAILY, 1, 20, 20));
+        list.add(new RewardAction(ActionType.TRAIN_DAILY, Strategy.DAILY, 1, 20, 20));
+        list.add(new RewardAction(ActionType.TRAIN_SPECIAL, Strategy.DAILY, 1, 10, 10));
+        list.add(new RewardAction(ActionType.TRAIN_INTELLIGENCE, Strategy.DAILY, 1, 10, 10));
+        list.add(new RewardAction(ActionType.TRAIN_MISTAKE, Strategy.DAILY, 1, 10, 10));
+        list.add(new RewardAction(ActionType.ANSWER_CORRECTION, Strategy.WEEKELY, 5, 10, 10));
+        list.add(new RewardAction(ActionType.COURSE_BUY, Strategy.NONE, 0, 0, 0));
+        list.add(new RewardAction(ActionType.WATCH_FREE, Strategy.DAILY, 1, 10, 10));
+        list.add(new RewardAction(ActionType.WATCH_PAY, Strategy.DAILY, 1, 20, 20));
+        list.add(new RewardAction(ActionType.EVALUATE_AFTER, Strategy.DAILY, 1, 30, 30));
+        list.add(new RewardAction(ActionType.EVALUATE, Strategy.DAILY, 1, 10, 10));
+        list.add(new RewardAction(ActionType.SHARE, Strategy.DAILY, 2, 10, 10));
+        list.add(new RewardAction(ActionType.CHARGE, Strategy.NONE, 0, 0, 0));
+        list.add(new RewardAction(ActionType.ACTIVTY, Strategy.NONE, 0, 0, 0));
+        list.add(new RewardAction(ActionType.SL_CORR_SINGLE, Strategy.DAILY, 1, 10, 10));
+        list.add(new RewardAction(ActionType.SL_CORR_SET, Strategy.DAILY, 1, 20, 20));
+        list.add(new RewardAction(ActionType.SL_CORR_STANDARD, Strategy.DAILY, 1, 10, 10));
+        list.add(new RewardAction(ActionType.SL_CORR_ARGUMENT, Strategy.DAILY, 1, 10, 10));
 
         System.out.println(JSON.toJSONString(list));
     }
