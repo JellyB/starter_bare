@@ -20,6 +20,8 @@ public class UserRedisSessionKeys {
      * @see {@link com.huatu.tiku.common.consts.CatgoryType}
      */
     public static final String catgory = "catgory";//知识点类目
-    public static final String qcount = "qcount";//知识点类目
+    public static final String qcount = "qcount";//做题数量
+    public static final String ucId = "ucId";//ucId
+
 
 }

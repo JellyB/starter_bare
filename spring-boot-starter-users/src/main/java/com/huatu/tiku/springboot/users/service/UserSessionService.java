@@ -334,7 +334,9 @@ public class UserSessionService {
                     .nick(serializeSession.get(UserRedisSessionKeys.nick))
                     .uname(serializeSession.get(UserRedisSessionKeys.uname))
                     .oldToken(serializeSession.get(UserRedisSessionKeys.oldToken))
-                    .newDiveceLoginTime(serializeSession.get(UserRedisSessionKeys.newDiveceLoginTime)).build();
+                    .newDiveceLoginTime(serializeSession.get(UserRedisSessionKeys.newDiveceLoginTime))
+                    .ucId(serializeSession.get(UserRedisSessionKeys.ucId))
+                    .build();
             return userSession;
         }
         return null;
