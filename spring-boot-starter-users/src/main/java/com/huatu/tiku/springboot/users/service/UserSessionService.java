@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 /**
  * 用户session工具包
  * Created by shaojieyue
@@ -31,16 +33,17 @@ public class UserSessionService {
     public static final String USER_TOKEN_KEY = "utoken_%s";
 
     //新设备登录消息提示
-    public static final String TIP_MESSAGE="您的账号于%s在其它客户端登录，请重新登录。\n如非本人操作，则密码可能已泄露，请及时修改密码。";
+    public static final String TIP_MESSAGE = "您的账号于%s在其它客户端登录，请重新登录。\n如非本人操作，则密码可能已泄露，请及时修改密码。";
 
 
     /**
      * 查询session key 对应的value
+     *
      * @param token token
-     * @param key session 属性
+     * @param key   session 属性
      * @return
      */
-    private final String getSessionValue(String token,String key){
+    private final String getSessionValue(String token, String key) {
         String value = null;
         if (StringUtils.isEmpty(token) || StringUtils.isEmpty(key)) {
             return value;
@@ -51,14 +54,15 @@ public class UserSessionService {
 
     /**
      * 获取用户id
+     *
      * @param token
      * @return
      */
     public long getUid(String token) {
         long userId = -1;
-        if(StringUtils.isNotBlank(token)){
+        if (isNotBlank(token)) {
             final String uidStr = getSessionValue(token, UserRedisSessionKeys.id);
-            if(StringUtils.isEmpty(uidStr)){//id存在
+            if (StringUtils.isEmpty(uidStr)) {//id存在
                 userId = Long.valueOf(uidStr);
             }
         }
@@ -67,6 +71,7 @@ public class UserSessionService {
 
     /**
      * 通过用户id查询其token
+     *
      * @param userId
      * @return
      */
@@ -78,61 +83,98 @@ public class UserSessionService {
 
     /**
      * 查询用户手机号
+     *
      * @param token
      * @return
      */
     @Deprecated
-    public final String getMobileNo(String token){
+    public final String getMobileNo(String token) {
         return getSessionValue(token, UserRedisSessionKeys.mobile);
     }
 
     /**
      * 查询用户名称
+     *
      * @param token
      * @return
      */
     @Deprecated
-    public final String getNick(String token){
-        return getSessionValue(token,UserRedisSessionKeys.nick);
+    public final String getNick(String token) {
+        return getSessionValue(token, UserRedisSessionKeys.nick);
     }
 
     /**
      * 查询用户username
+     *
      * @param token
      * @return
      */
     @Deprecated
-    public final String getUname(String token){
-        return getSessionValue(token,UserRedisSessionKeys.uname);
+    public final String getUname(String token) {
+        return getSessionValue(token, UserRedisSessionKeys.uname);
     }
 
 
-
     /**
-     * 获取用户id
+     * 获取用户科目id
+     *
      * @param token
      * @return
      */
-    @Deprecated
     public int getSubject(String token) {
+        int subject = getRealSubject(token);
+        return subject;
+    }
+
+
+    /**
+     * 事业单位ABCD科目,真题演练/精准估分/专项模考需要转化为其父科目（职测）
+     *
+     * @return
+     */
+    public int getNewSubject(String token) {
+        int newSubject = getRealSubject(token);
+        newSubject = convertChildSubjectToParentSubject(newSubject);
+        System.out.print("最终科目ID是:{}" + newSubject);
+        return newSubject;
+    }
+
+    /**
+     * 从用户token中获取科目ID
+     *
+     * @return
+     */
+    public int getRealSubject(String token) {
         final String subjectStr = getSessionValue(token, UserRedisSessionKeys.subject);
         int subject = -1;
-        if(StringUtils.isNotEmpty(subjectStr)){//id存在
+        if (isNotBlank(subjectStr)) {
             subject = Integer.valueOf(subjectStr);
         }
         return subject;
     }
 
     /**
+     * 针对事业单位ABC类科目转换
+     */
+    public int convertChildSubjectToParentSubject(int subject) {
+        if (subject == 200100054 || subject == 200100055 || subject == 200100056 || subject == 200100057) {
+            return 3;
+        }
+        System.out.print("科目ID是:{}" + subject);
+        return subject;
+    }
+
+    /**
      * 获取当前用户所属的知识点类目
+     *
      * @param token
      * @return
      */
     @Deprecated
-    public int getCatgory(String token){
+    public int getCatgory(String token) {
         final String sessionValue = getSessionValue(token, UserRedisSessionKeys.catgory);
         int pointCatgory = -1;
-        if(StringUtils.isNotEmpty(sessionValue)){//id存在
+        if (StringUtils.isNotEmpty(sessionValue)) {//id存在
             pointCatgory = Integer.valueOf(sessionValue);
         }
         return pointCatgory;
@@ -140,14 +182,15 @@ public class UserSessionService {
 
     /**
      * 获取用户抽题数量配置
+     *
      * @param token
      * @return
      */
     @Deprecated
-    public int getQcount(String token){
+    public int getQcount(String token) {
         final String sessionValue = getSessionValue(token, UserRedisSessionKeys.qcount);
         int qcount = 10;
-        if(StringUtils.isNotEmpty(sessionValue)){//id存在
+        if (StringUtils.isNotEmpty(sessionValue)) {//id存在
             qcount = Integer.valueOf(sessionValue);
         }
 
@@ -156,14 +199,15 @@ public class UserSessionService {
 
     /**
      * 查询区域id
+     *
      * @param token token
      * @return
      */
     @Deprecated
-    public int getArea(String token ){
+    public int getArea(String token) {
         final String areaStr = getSessionValue(token, UserRedisSessionKeys.area);
         int area = -1;
-        if(StringUtils.isNotEmpty(areaStr)){//id存在
+        if (StringUtils.isNotEmpty(areaStr)) {//id存在
             area = Integer.valueOf(areaStr);
         }
         return area;
@@ -171,14 +215,15 @@ public class UserSessionService {
 
     /**
      * 查询email
+     *
      * @param token token
      * @return
      */
     @Deprecated
-    public String getEmail(String token ){
+    public String getEmail(String token) {
         final String emailStr = getSessionValue(token, UserRedisSessionKeys.email);
 
-        if(StringUtils.isEmpty(emailStr)){//id存在
+        if (StringUtils.isEmpty(emailStr)) {//id存在
             return null;
         }
         return emailStr;
@@ -186,6 +231,7 @@ public class UserSessionService {
 
     /**
      * 获取过期时间
+     *
      * @param token
      * @return
      */
@@ -193,7 +239,7 @@ public class UserSessionService {
     public long getExpireTime(String token) {
         final String expireTimeStr = getSessionValue(token, UserRedisSessionKeys.expireTime);
         long loginTime = -1;
-        if(StringUtils.isEmpty(expireTimeStr)){//id存在
+        if (StringUtils.isEmpty(expireTimeStr)) {//id存在
             loginTime = Long.valueOf(expireTimeStr);
         }
         return loginTime;
@@ -201,21 +247,23 @@ public class UserSessionService {
 
     /**
      * 判断用户登录状态是否过期
+     *
      * @param token 用户token
      * @return true：过期 false：没有过期
      */
     @Deprecated
-    private final boolean isExpire(String token){
+    private final boolean isExpire(String token) {
         if (StringUtils.isEmpty(token)) {
             return true;
         }
         //过期时间小于当前时间，说明已经过期
-        return getExpireTime(token)<System.currentTimeMillis();
+        return getExpireTime(token) < System.currentTimeMillis();
     }
 
 
     /**
      * 断定session有效
+     *
      * @param token 用户的token
      * @throws BizException 当用户session无效时抛出异常
      */
@@ -228,8 +276,8 @@ public class UserSessionService {
             final String time = DateFormatUtils.format(Long.parseLong(newDiveceLoginTime), "MM月dd日HH:mm");
             final String tipMessage = String.format(TIP_MESSAGE, time);
             //设置过期一个月,让自动过期
-            sessionRedisTemplate.expire(token,30, TimeUnit.DAYS);
-            throw new UnauthorizedException(CommonResult.LOGIN_ON_OTHER_DEVICE,tipMessage);
+            sessionRedisTemplate.expire(token, 30, TimeUnit.DAYS);
+            throw new UnauthorizedException(CommonResult.LOGIN_ON_OTHER_DEVICE, tipMessage);
         }
 
         if (isExpire(token)) {//session过期
@@ -245,24 +293,26 @@ public class UserSessionService {
 
     /**
      * 判断用户登陆状态是否过期
+     *
      * @param expireTime
      * @return
      */
-    public boolean isExpire(long expireTime){
-        return expireTime<System.currentTimeMillis();
+    public boolean isExpire(long expireTime) {
+        return expireTime < System.currentTimeMillis();
     }
 
     /**
      * 获取完整的usersession
+     *
      * @param token
      * @return
      */
-    public UserSession getUserSession(String token){
-        if(StringUtils.isBlank(token)){
+    public UserSession getUserSession(String token) {
+        if (StringUtils.isBlank(token)) {
             return null;
         }
-        Map<String,String> serializeSession = sessionRedisTemplate.hgetAll(token);
-        if(MapUtils.isNotEmpty(serializeSession)){
+        Map<String, String> serializeSession = sessionRedisTemplate.hgetAll(token);
+        if (MapUtils.isNotEmpty(serializeSession)) {
 
             String ssoId = serializeSession.get(UserRedisSessionKeys.ssoId);
             String id = serializeSession.get(UserRedisSessionKeys.id);
@@ -274,13 +324,13 @@ public class UserSessionService {
 
             UserSession userSession = UserSession.builder()
                     .token(token)
-                    .ssoId(StringUtils.isEmpty(ssoId) ? -1:Integer.valueOf(ssoId))
-                    .id(StringUtils.isEmpty(id) ? -1:Integer.valueOf(id))
-                    .subject(StringUtils.isEmpty(subject) ? -1:Integer.valueOf(subject))
-                    .area(StringUtils.isEmpty(area) ? -1:Integer.valueOf(area))
-                    .expireTime(StringUtils.isEmpty(expireTime) ? -1:Long.valueOf(expireTime))
-                    .category(StringUtils.isEmpty(category) ? -1:Integer.valueOf(category))
-                    .qcount(StringUtils.isEmpty(qcount) ? DEFAUL_QCOUNT:Integer.valueOf(qcount))
+                    .ssoId(StringUtils.isEmpty(ssoId) ? -1 : Integer.valueOf(ssoId))
+                    .id(StringUtils.isEmpty(id) ? -1 : Integer.valueOf(id))
+                    .subject(StringUtils.isEmpty(subject) ? -1 : Integer.valueOf(subject))
+                    .area(StringUtils.isEmpty(area) ? -1 : Integer.valueOf(area))
+                    .expireTime(StringUtils.isEmpty(expireTime) ? -1 : Long.valueOf(expireTime))
+                    .category(StringUtils.isEmpty(category) ? -1 : Integer.valueOf(category))
+                    .qcount(StringUtils.isEmpty(qcount) ? DEFAUL_QCOUNT : Integer.valueOf(qcount))
                     .mobile(serializeSession.get(UserRedisSessionKeys.mobile))
                     .email(serializeSession.get(UserRedisSessionKeys.email))
                     .nick(serializeSession.get(UserRedisSessionKeys.nick))
@@ -294,11 +344,12 @@ public class UserSessionService {
 
     /**
      * 断定session是否有效
+     *
      * @param userSession
      * @throws BizException
      */
     public UserSession assertSession(UserSession userSession) throws BizException {
-        if(userSession == null){
+        if (userSession == null) {
             throw new BizException(CommonResult.SESSION_EXPIRE);
         }
         //有新设备登录，当前设备已经被踢掉
@@ -307,8 +358,8 @@ public class UserSessionService {
             final String time = DateFormatUtils.format(Long.parseLong(userSession.getNewDiveceLoginTime()), "MM月dd日HH:mm");
             final String tipMessage = String.format(TIP_MESSAGE, time);
             //设置过期一个月,让自动过期
-            sessionRedisTemplate.expire(userSession.getToken(),30, TimeUnit.DAYS);
-            throw new UnauthorizedException(CommonResult.LOGIN_ON_OTHER_DEVICE,tipMessage);
+            sessionRedisTemplate.expire(userSession.getToken(), 30, TimeUnit.DAYS);
+            throw new UnauthorizedException(CommonResult.LOGIN_ON_OTHER_DEVICE, tipMessage);
         }
 
         if (isExpire(userSession.getExpireTime())) {//session过期
