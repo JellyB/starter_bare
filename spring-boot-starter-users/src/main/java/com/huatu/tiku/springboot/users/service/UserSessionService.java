@@ -135,7 +135,6 @@ public class UserSessionService {
     public int getNewSubject(String token) {
         int newSubject = getRealSubject(token);
         newSubject = convertChildSubjectToParentSubject(newSubject);
-        System.out.print("最终科目ID是:{}" + newSubject);
         return newSubject;
     }
 
@@ -160,7 +159,6 @@ public class UserSessionService {
         if (subject == 200100054 || subject == 200100055 || subject == 200100056 || subject == 200100057) {
             return 4;
         }
-        System.out.print("科目ID是:{}" + subject);
         return subject;
     }
 
