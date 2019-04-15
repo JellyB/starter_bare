@@ -158,7 +158,7 @@ public class UserSessionService {
      */
     public int convertChildSubjectToParentSubject(int subject) {
         if (subject == 200100054 || subject == 200100055 || subject == 200100056 || subject == 200100057) {
-            return 3;
+            return 4;
         }
         System.out.print("科目ID是:{}" + subject);
         return subject;
