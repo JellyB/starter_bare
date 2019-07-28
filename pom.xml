@@ -29,6 +29,7 @@
         <module>spring-boot-starter-report</module>
         <module>spring-boot-starter-version-mapping</module>
         <module>spring-boot-starter-web-message</module>
+        <module>spring-boot-starter-redis-sentinel</module>
     </modules>
 
 </project>

@@ -350,7 +350,7 @@ public class UserSessionService {
      */
     public UserSession assertSession(UserSession userSession) throws BizException {
         if (userSession == null) {
-            throw new BizException(CommonResult.SESSION_EXPIRE);
+            throw new UnauthorizedException(CommonResult.SESSION_EXPIRE);
         }
         //有新设备登录，当前设备已经被踢掉
         if ("1".equals(userSession.getOldToken())) {
