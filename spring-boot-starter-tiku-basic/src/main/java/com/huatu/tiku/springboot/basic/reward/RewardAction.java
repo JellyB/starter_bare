@@ -87,7 +87,8 @@ public class RewardAction implements Serializable {
         SL_CORR_ARGUMENT("申论议论文批改"),
         SL_CORR_SET("申论套题批改"),
         COURSE_PRACTICE_RIGHT("随堂练赠送金币"),
-        COURSE_AFTER_PRACTICE_RIGHT("课后练习赠送金币");
+        COURSE_AFTER_PRACTICE_RIGHT("课后练习赠送金币"),
+        ESSAY_CORRECT_FEEDBACK("批改评价成功");
 
         private String bizName;
 
