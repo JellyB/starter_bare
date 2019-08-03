@@ -127,6 +127,7 @@ public class RewardAction implements Serializable {
         list.add(new RewardAction(ActionType.SL_CORR_SET, Strategy.DAILY, 1, 20, 20));
         list.add(new RewardAction(ActionType.SL_CORR_STANDARD, Strategy.DAILY, 1, 10, 10));
         list.add(new RewardAction(ActionType.SL_CORR_ARGUMENT, Strategy.DAILY, 1, 10, 10));
+        list.add(new RewardAction(ActionType.ESSAY_CORRECT_FEEDBACK, Strategy.NONE, 0, 10, 1));
 
         System.out.println(JSON.toJSONString(list));
     }
