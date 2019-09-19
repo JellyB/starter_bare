@@ -2,6 +2,8 @@ package com.huatu.tiku.springboot.users.support;
 
 import com.huatu.tiku.common.bean.user.UserSession;
 import com.huatu.tiku.springboot.users.service.UserSessionService;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -69,6 +71,10 @@ public class TokenMethodArgumentResolver extends RequestHeaderMethodArgumentReso
         if (config.check()) {
             userSessionService.assertSession(userSession);
         }
+        //为了游客模式 传非法token时抛出异常
+		if (!config.check() && StringUtils.isNotBlank(token)) {
+			userSessionService.assertSession(userSession);
+		}
         if (userSession == null) {
             return needSimple ? -1 : null;
         }else{
