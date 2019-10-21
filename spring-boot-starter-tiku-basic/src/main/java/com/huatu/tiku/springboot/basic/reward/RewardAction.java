@@ -84,7 +84,7 @@ public class RewardAction implements Serializable {
         ACTIVTY(""),//运营活动
         SL_CORR_SINGLE("申论单题批改"),
         SL_CORR_STANDARD("申论标准答案批改"),
-        SL_CORR_ARGUMENT("申论议论文批改"),
+        SL_CORR_ARGUMENT("申论文章写作批改"),
         SL_CORR_SET("申论套题批改"),
         COURSE_PRACTICE_RIGHT("随堂练赠送金币"),
         COURSE_AFTER_PRACTICE_RIGHT("课后练习赠送金币"),
@@ -127,7 +127,7 @@ public class RewardAction implements Serializable {
         list.add(new RewardAction(ActionType.SL_CORR_SET, Strategy.DAILY, 1, 20, 20));
         list.add(new RewardAction(ActionType.SL_CORR_STANDARD, Strategy.DAILY, 1, 10, 10));
         list.add(new RewardAction(ActionType.SL_CORR_ARGUMENT, Strategy.DAILY, 1, 10, 10));
-        list.add(new RewardAction(ActionType.ESSAY_CORRECT_FEEDBACK, Strategy.NONE, 0, 10, 1));
+        list.add(new RewardAction(ActionType.ESSAY_CORRECT_FEEDBACK, Strategy.NONE, 1, 10, 1));
 
         System.out.println(JSON.toJSONString(list));
     }
